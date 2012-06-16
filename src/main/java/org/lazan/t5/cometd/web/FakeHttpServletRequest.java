@@ -1,0 +1,247 @@
+package org.lazan.t5.cometd.web;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+@SuppressWarnings("rawtypes")
+public class FakeHttpServletRequest implements HttpServletRequest {
+	private HttpSession session;
+	
+	public FakeHttpServletRequest(HttpSession session) {
+		super();
+		this.session = session;
+	}
+
+	public Object getAttribute(String arg0) {
+		throw new UnsupportedOperationException("getAttribute");
+	}
+
+	public Enumeration getAttributeNames() {
+		throw new UnsupportedOperationException("getAttributeNames");
+	}
+
+	public String getCharacterEncoding() {
+		throw new UnsupportedOperationException("getCharacterEncoding");
+	}
+
+	public int getContentLength() {
+		throw new UnsupportedOperationException("getContentLength");
+	}
+
+	public String getContentType() {
+		throw new UnsupportedOperationException("getContentType");
+	}
+
+	public ServletInputStream getInputStream() throws IOException {
+		throw new UnsupportedOperationException("getInputStream");
+	}
+
+	public String getLocalAddr() {
+		throw new UnsupportedOperationException("getLocalAddr");
+	}
+
+	public String getLocalName() {
+		throw new UnsupportedOperationException("getLocalName");
+	}
+
+	public int getLocalPort() {
+		throw new UnsupportedOperationException("getLocalPort");
+	}
+
+	public Locale getLocale() {
+		throw new UnsupportedOperationException("getLocale");
+	}
+
+	public Enumeration getLocales() {
+		throw new UnsupportedOperationException("getLocales");
+	}
+
+	public String getParameter(String arg0) {
+		throw new UnsupportedOperationException("getParameter");
+	}
+
+	public Map getParameterMap() {
+		throw new UnsupportedOperationException("getParameterMap");
+	}
+
+	public Enumeration getParameterNames() {
+		throw new UnsupportedOperationException("getParameterNames");
+	}
+
+	public String[] getParameterValues(String arg0) {
+		throw new UnsupportedOperationException("getParameterValues");
+	}
+
+	public String getProtocol() {
+		throw new UnsupportedOperationException("getProtocol");
+	}
+
+	public BufferedReader getReader() throws IOException {
+		throw new UnsupportedOperationException("getReader");
+	}
+
+	public String getRealPath(String arg0) {
+		throw new UnsupportedOperationException("getRealPath");
+	}
+
+	public String getRemoteAddr() {
+		throw new UnsupportedOperationException("getRemoteAddr");
+	}
+
+	public String getRemoteHost() {
+		throw new UnsupportedOperationException("getRemoteHost");
+	}
+
+	public int getRemotePort() {
+		throw new UnsupportedOperationException("getRemotePort");
+	}
+
+	public RequestDispatcher getRequestDispatcher(String arg0) {
+		throw new UnsupportedOperationException("getRequestDispatcher");
+	}
+
+	public String getScheme() {
+		throw new UnsupportedOperationException("getScheme");
+	}
+
+	public String getServerName() {
+		throw new UnsupportedOperationException("getServerName");
+	}
+
+	public int getServerPort() {
+		throw new UnsupportedOperationException("getServerPort");
+	}
+
+	public boolean isSecure() {
+		throw new UnsupportedOperationException("isSecure");
+	}
+
+	public void removeAttribute(String arg0) {
+		throw new UnsupportedOperationException("removeAttribute");
+	}
+
+	public void setAttribute(String arg0, Object arg1) {
+		throw new UnsupportedOperationException("setAttribute");
+	}
+
+	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
+		throw new UnsupportedOperationException("setCharacterEncoding");
+	}
+
+	public String getAuthType() {
+		throw new UnsupportedOperationException("getAuthType");
+	}
+
+	public String getContextPath() {
+		throw new UnsupportedOperationException("getContextPath");
+	}
+
+	public Cookie[] getCookies() {
+		throw new UnsupportedOperationException("getCookies");
+	}
+
+	public long getDateHeader(String arg0) {
+		throw new UnsupportedOperationException("getDateHeader");
+	}
+
+	public String getHeader(String arg0) {
+		throw new UnsupportedOperationException("getHeader");
+	}
+
+	public Enumeration getHeaderNames() {
+		throw new UnsupportedOperationException("getHeaderNames");
+	}
+
+	public Enumeration getHeaders(String arg0) {
+		throw new UnsupportedOperationException("getHeaders");
+	}
+
+	public int getIntHeader(String arg0) {
+		throw new UnsupportedOperationException("getIntHeader");
+	}
+
+	public String getMethod() {
+		throw new UnsupportedOperationException("getMethod");
+	}
+
+	public String getPathInfo() {
+		throw new UnsupportedOperationException("getPathInfo");
+	}
+
+	public String getPathTranslated() {
+		throw new UnsupportedOperationException("getPathTranslated");
+	}
+
+	public String getQueryString() {
+		throw new UnsupportedOperationException("getQueryString");
+	}
+
+	public String getRemoteUser() {
+		throw new UnsupportedOperationException("getRemoteUser");
+	}
+
+	public String getRequestURI() {
+		throw new UnsupportedOperationException("getRequestURI");
+	}
+
+	public StringBuffer getRequestURL() {
+		throw new UnsupportedOperationException("getRequestURL");
+	}
+
+	public String getRequestedSessionId() {
+		throw new UnsupportedOperationException("getRequestedSessionId");
+	}
+
+	public String getServletPath() {
+		throw new UnsupportedOperationException("getServletPath");
+	}
+
+	public HttpSession getSession() {
+		if (session == null) {
+			throw new UnsupportedOperationException("getSession");
+		}
+		return session;
+	}
+
+	public HttpSession getSession(boolean arg0) {
+		if (session == null) {
+			throw new UnsupportedOperationException("getSession");
+		}
+		return session;
+	}
+
+	public Principal getUserPrincipal() {
+		throw new UnsupportedOperationException("getUserPrincipal");
+	}
+
+	public boolean isRequestedSessionIdFromCookie() {
+		throw new UnsupportedOperationException("isRequestedSessionIdFromCookie");
+	}
+
+	public boolean isRequestedSessionIdFromURL() {
+		throw new UnsupportedOperationException("isRequestedSessionIdFromURL");
+	}
+
+	public boolean isRequestedSessionIdFromUrl() {
+		throw new UnsupportedOperationException("isRequestedSessionIdFromUrl");
+	}
+
+	public boolean isRequestedSessionIdValid() {
+		throw new UnsupportedOperationException("isRequestedSessionIdValid");
+	}
+
+	public boolean isUserInRole(String arg0) {
+		throw new UnsupportedOperationException("isUserInRole");
+	}
+}
