@@ -41,7 +41,7 @@ ChatManager.java
         private PushManager pushManager;
        
         public void publicChat(String message) {
-            pushManager.broadcast("chat", message);
+            pushManager.broadcast("publicChat", message);
         }
        
         public void privateChat(String userId, String message) {
