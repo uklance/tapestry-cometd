@@ -2,7 +2,8 @@ tapestry-cometd
 ===============
 
 A push implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
-**This project is a work in progress and does not work in it's current state**
+
+<font color="red">This project is a work in progress and does not work in it's current state</font>
 
 Usage:
 
@@ -14,9 +15,10 @@ Page.tml
         t:event="processChat" 
         t:append="true" 
         t:session="false"
-    >
+    />
+    <t:block t:id="messageBlock">
         ${chatMessage}
-    </t:zone>
+    </t:block>
 
 Page.java
 
@@ -28,9 +30,13 @@ Page.java
         @Property
         private User user;
         
+        @Inject
+        private Block messageBlock;
+        
         @OnEvent("processChat")
-        onProcessChat(String chatMessage) {
+        Block onProcessChat(String chatMessage) {
             this.chatMessage = chatMessage;
+            return messageBlock;
         }
     }
     
