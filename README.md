@@ -6,6 +6,7 @@ A push implementation for [tapestry][http://tapestry.apache.org/] based on [come
 Usage:
 
 Page.tml
+
     <t:zone 
         t:mixins="cometd/Push" 
         t:topic="publicChat"
@@ -18,6 +19,7 @@ Page.tml
     </t:zone>
 
 Page.java
+
     public class Page {
         @Property
         private String chatMessage;
@@ -29,6 +31,7 @@ Page.java
     }
     
 ChatManager.java
+
     public class ChatManager {
         @Inject
         private PushManager pushManager;
