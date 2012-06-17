@@ -80,8 +80,8 @@ public class CometdPushManager implements PushManager {
 						} else {
 							// HttpSession not required, all subscribers share the same message
 							Map<String, String> message = new HashMap<String, String>();
-							//String html = componentStringRenderer.render(eventParams);
-							String html = "this is a test"; // TODO
+							String html = componentStringRenderer.render(eventParams);
+							//String html = "this is a test"; // TODO
 							message.put("content", html);
 							channel.publish(null, message, null);
 						}
@@ -124,7 +124,10 @@ public class CometdPushManager implements PushManager {
 			if (!zoneContextByChannelId.containsKey(channelId)) {
 				String activePageName = getRequiredString(data, "activePageName");
 				String containingPageName = getRequiredString(data, "containingPageName");
-				String nestedComponentId = getRequiredString(data, "nestedComponentId");
+				String nestedComponentId = (String) data.get("nestedComponentId");
+				if (nestedComponentId == null) {
+					nestedComponentId = "";
+				}
 				String eventType = getRequiredString(data, "eventType");
 				
 				ClientContext zoneContext = new ClientContext(session, activePageName, containingPageName, nestedComponentId, eventType);

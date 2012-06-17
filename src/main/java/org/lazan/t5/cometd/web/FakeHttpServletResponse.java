@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FakeHttpServletResponse implements HttpServletResponse {
 	private final OutputStream outputStream;
 	private final String charsetName;
+	private String contentType;
 	
 	public FakeHttpServletResponse(OutputStream outputStream, String charsetName) {
 		super();
@@ -29,11 +30,11 @@ public class FakeHttpServletResponse implements HttpServletResponse {
 	}
 
 	public String getCharacterEncoding() {
-		throw new UnsupportedOperationException("getCharacterEncoding");
+		return charsetName;
 	}
 
 	public String getContentType() {
-		throw new UnsupportedOperationException("getContentType");
+		return contentType;
 	}
 
 	public Locale getLocale() {
@@ -77,7 +78,7 @@ public class FakeHttpServletResponse implements HttpServletResponse {
 	}
 
 	public void setContentType(String arg0) {
-		throw new UnsupportedOperationException("setContentType");
+		this.contentType = arg0;
 	}
 
 	public void setLocale(Locale arg0) {

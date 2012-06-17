@@ -16,6 +16,7 @@ import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ParallelExecutor;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Request;
@@ -50,7 +51,8 @@ public class ComponentStringRendererImpl implements ComponentStringRenderer {
 		Future<String> future = parallelExecutor.invoke(new Invokable<String>() {
 			public String invoke() {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				final HttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession);
+				final FakeHttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession);
+				fakeHttpRequest.setHeader("X-Requested-With", "XMLHttpRequest");
 				HttpServletResponse fakeHttpResponse = new FakeHttpServletResponse(out, applicationCharset);
 				TapestrySessionFactory sessionFactory = new TapestrySessionFactory() {
 					public Session getSession(boolean create) {
@@ -67,7 +69,9 @@ public class ComponentStringRendererImpl implements ComponentStringRenderer {
 					requestGlobals.storeServletRequestResponse(fakeHttpRequest, fakeHttpResponse);
 					requestGlobals.storeRequestResponse(fakeRequest, fakeResponse);
 					componentRequestHandler.handleComponentEvent(parameters);
-					return new String(out.toByteArray(), applicationCharset);
+					String jsonString = new String(out.toByteArray(), applicationCharset);
+					JSONObject json = new JSONObject(jsonString);
+					return json.getString("content");
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				} finally {

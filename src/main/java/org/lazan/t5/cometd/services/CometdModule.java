@@ -40,7 +40,7 @@ public class CometdModule {
 	
 	public static void contributeBayeuxServletHttpServletRequestFilter(MappedConfiguration<String, Object> config, SymbolSource symbolSource) {
 		// add init-params for the Cometd servlet here
-		config.add("logLevel", "3");
+		config.add("logLevel", "2");
 	}
 	
 	public static BayeuxServer buildBayeuxServer(BayeuxServletHttpServletRequestFilter cometdHttpServletRequestFilter) {

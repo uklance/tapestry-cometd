@@ -11,6 +11,8 @@ import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 @Import(library={
@@ -52,27 +54,37 @@ public class Push {
 	@Parameter
 	private boolean session;
 	
+	@Inject
+	private Request request;
+	
 	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
 	private String event;
+	
+	@Inject
+	private BaseURLSource baseUrlSource;
 	
 	@BeginRender
 	void beginRender() {
 		ComponentResources zoneResources = mixinResources.getContainerResources();
-		String cometdPath = "http://localhost:8080/tapestry-sandbox/cometd"; // TODO
-		String completeId = zoneResources.getCompleteId();
+		ComponentResources containerResources = zoneResources.getContainerResources();
+		
+		String cometdPath = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
+		//String cometdPath = "http://localhost:8080/tapestry-sandbox/cometd"; // TODO
+		
+		//String completeId = zoneResources.getCompleteId();
 		String zoneClientId = zone.getClientId();
 		String channelId = String.format("/%s/%s", zoneResources.getCompleteId(), zoneClientId);
 		JSONObject spec = new JSONObject(
 				"cometdPath", cometdPath,
-				"activePageName", zoneResources.getPageName(), 
-				"containingPageName", zoneResources.getPageName(),
-				"nestedComponentId", zoneResources.getCompleteId(),
-				"eventType", event,
+				"activePageName", containerResources.getPageName(), // PushDemo
+				"containingPageName", containerResources.getPageName(), // PushDemo
+				"nestedComponentId", containerResources.getNestedId(), // ""
+				"eventType", event, // "chat"
 				"session", String.valueOf(session),
 				"channelId", channelId,
 				"topic", topic);
 		jss.addInitializerCall("push", spec);
 		
-		System.out.println(String.format("completeId: %s, clientId: %s, topic: %s, append: %s", completeId, zoneClientId, topic, append));
+		//System.out.println(String.format("completeId: %s, clientId: %s, topic: %s, append: %s", completeId, zoneClientId, topic, append));
 	}
 }

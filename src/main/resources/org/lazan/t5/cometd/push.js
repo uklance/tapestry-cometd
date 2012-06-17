@@ -16,7 +16,7 @@ Tapestry.Initializer.push = function(spec)
 			cometd.startBatch();
 			cometd.publish('/service/pushInit', data);
 			cometd.subscribe(spec.channelId, function(message) {
-				alert('Message Received ' + message.data.content);
+				alert('message: ' + message.data.content);
 			});
 			cometd.endBatch();
 		}

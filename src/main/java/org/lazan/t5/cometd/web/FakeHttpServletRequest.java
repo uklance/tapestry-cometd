@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,6 +18,10 @@ import javax.servlet.http.HttpSession;
 @SuppressWarnings("rawtypes")
 public class FakeHttpServletRequest implements HttpServletRequest {
 	private HttpSession session;
+	private Map<String, String> headers = new HashMap<String, String>();
+	private String characterEncoding;
+	private Map<String, String> parameters = new HashMap<String, String>();
+	private Map<String, Object> attributes = new HashMap<String, Object>();
 	
 	public FakeHttpServletRequest(HttpSession session) {
 		super();
@@ -24,7 +29,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public Object getAttribute(String arg0) {
-		throw new UnsupportedOperationException("getAttribute");
+		return attributes.get(arg0);
 	}
 
 	public Enumeration getAttributeNames() {
@@ -32,7 +37,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public String getCharacterEncoding() {
-		throw new UnsupportedOperationException("getCharacterEncoding");
+		return characterEncoding;
 	}
 
 	public int getContentLength() {
@@ -68,7 +73,11 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public String getParameter(String arg0) {
-		throw new UnsupportedOperationException("getParameter");
+		return parameters.get(arg0);
+	}
+	
+	public void setParameter(String key, String value) {
+		parameters.put(key,  value);
 	}
 
 	public Map getParameterMap() {
@@ -132,11 +141,11 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public void setAttribute(String arg0, Object arg1) {
-		throw new UnsupportedOperationException("setAttribute");
+		attributes.put(arg0, arg1);
 	}
 
 	public void setCharacterEncoding(String arg0) throws UnsupportedEncodingException {
-		throw new UnsupportedOperationException("setCharacterEncoding");
+		this.characterEncoding = arg0;
 	}
 
 	public String getAuthType() {
@@ -156,7 +165,11 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public String getHeader(String arg0) {
-		throw new UnsupportedOperationException("getHeader");
+		return headers.get(arg0);
+	}
+	
+	public void setHeader(String key, String value) {
+		headers.put(key, value);
 	}
 
 	public Enumeration getHeaderNames() {
