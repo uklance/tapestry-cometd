@@ -24,6 +24,10 @@ Page.java
         @Property
         private String chatMessage;
         
+        @SessionState
+        @Property
+        private User user;
+        
         @OnEvent("processChat")
         onProcessChat(String chatMessage) {
             this.chatMessage = chatMessage;
