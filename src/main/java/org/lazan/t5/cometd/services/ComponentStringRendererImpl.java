@@ -1,8 +1,6 @@
 package org.lazan.t5.cometd.services;
 
 import java.io.ByteArrayOutputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +12,9 @@ import org.apache.tapestry5.internal.services.RequestImpl;
 import org.apache.tapestry5.internal.services.ResponseImpl;
 import org.apache.tapestry5.internal.services.SessionImpl;
 import org.apache.tapestry5.internal.services.TapestrySessionFactory;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.ParallelExecutor;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentRequestHandler;
@@ -26,16 +26,16 @@ import org.lazan.t5.cometd.web.FakeHttpServletRequest;
 import org.lazan.t5.cometd.web.FakeHttpServletResponse;
 
 public class ComponentStringRendererImpl implements ComponentStringRenderer {
-	private final ExecutorService executors;
+	private final ParallelExecutor parallelExecutor;
 	private final ComponentRequestHandler componentRequestHandler;
 	private final RequestGlobals requestGlobals;
 	private final String applicationCharset;
 	private final PerthreadManager perthreadManager;
 
-	public ComponentStringRendererImpl(ExecutorService executors, ComponentRequestHandler componentRequestHandler,
+	public ComponentStringRendererImpl(ParallelExecutor parallelExecutor, ComponentRequestHandler componentRequestHandler,
 			RequestGlobals requestGlobals, @Symbol(SymbolConstants.CHARSET) String applicationCharset, PerthreadManager perthreadManager) {
 		super();
-		this.executors = executors;
+		this.parallelExecutor = parallelExecutor;
 		this.componentRequestHandler = componentRequestHandler;
 		this.requestGlobals = requestGlobals;
 		this.applicationCharset = applicationCharset;
@@ -47,8 +47,8 @@ public class ComponentStringRendererImpl implements ComponentStringRenderer {
 	}
 
 	public String render(final ComponentEventRequestParameters parameters, final HttpSession httpSession) {
-		Future<String> future = executors.submit(new Callable<String>() {
-			public String call() throws Exception {
+		Future<String> future = parallelExecutor.invoke(new Invokable<String>() {
+			public String invoke() {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				final HttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession);
 				HttpServletResponse fakeHttpResponse = new FakeHttpServletResponse(out, applicationCharset);
@@ -67,11 +67,13 @@ public class ComponentStringRendererImpl implements ComponentStringRenderer {
 					requestGlobals.storeServletRequestResponse(fakeHttpRequest, fakeHttpResponse);
 					requestGlobals.storeRequestResponse(fakeRequest, fakeResponse);
 					componentRequestHandler.handleComponentEvent(parameters);
+					return new String(out.toByteArray(), applicationCharset);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				} finally {
 					perthreadManager.cleanup();
 				}
 
-				return new String(out.toByteArray(), applicationCharset);
 			}
 		});
 		try {

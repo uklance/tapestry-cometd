@@ -32,18 +32,20 @@ public class CometdPushManager implements PushManager {
 	private final HttpServletRequest request;
 	private final ConcurrentMap<String, Set<String>> channelIdsByTopic = new ConcurrentHashMap<String, Set<String>>();
 	private final ConcurrentMap<String, ClientContext> zoneContextByChannelId = new ConcurrentHashMap<String, ClientContext>();
-	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext(); 
+	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
+	private static final String INIT_CHANNEL = "/service/pushInit";
 	
 	public CometdPushManager(BayeuxServer bayeuxServer, Logger logger, ComponentStringRenderer componentStringRenderer, TypeCoercer typeCoercer, HttpServletRequest request) {
 		this.bayeuxServer = bayeuxServer;
-		this.bayeuxServer.getChannel("/service/pushInit").addListener(new PushInitListener());
+		this.bayeuxServer.createIfAbsent(INIT_CHANNEL);
+		this.bayeuxServer.getChannel(INIT_CHANNEL).addListener(new PushInitListener());
 		this.logger = logger;
 		this.componentStringRenderer = componentStringRenderer;
 		this.typeCoercer = typeCoercer;
 		this.request = request;
 	}
 
-	public void broadcast(final String topic, Object[] context) {
+	public void broadcast(final String topic, Object... context) {
 		Collection<String> channelIds = channelIdsByTopic.get(topic);
 		if (channelIds != null) {
 			for (String channelId : channelIds) {
@@ -78,17 +80,20 @@ public class CometdPushManager implements PushManager {
 						} else {
 							// HttpSession not required, all subscribers share the same message
 							Map<String, String> message = new HashMap<String, String>();
-							String html = componentStringRenderer.render(eventParams);
+							//String html = componentStringRenderer.render(eventParams);
+							String html = "this is a test"; // TODO
 							message.put("content", html);
 							channel.publish(null, message, null);
 						}
 					}
 				}
 			}
+		} else {
+			logger.info("No channels for {}", topic);
 		}
 	}
 	
-	public void service(final String clientId, Object[] context) {
+	public void service(final String clientId, Object... context) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -110,8 +115,11 @@ public class CometdPushManager implements PushManager {
 			if (channelIds == null) {
 				Set<String> tempChannelIds = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 				channelIds = channelIdsByTopic.putIfAbsent(topic, tempChannelIds);
+				if (channelIds == null) {
+					channelIds = tempChannelIds;
+				}
 			}
-			channelIds.add(channel.getId());
+			channelIds.add(channelId);
 			
 			if (!zoneContextByChannelId.containsKey(channelId)) {
 				String activePageName = getRequiredString(data, "activePageName");

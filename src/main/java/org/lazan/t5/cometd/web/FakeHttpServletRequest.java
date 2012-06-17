@@ -124,7 +124,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public boolean isSecure() {
-		throw new UnsupportedOperationException("isSecure");
+		return false; // TODO
 	}
 
 	public void removeAttribute(String arg0) {
