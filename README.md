@@ -2,6 +2,7 @@ tapestry-cometd
 ===============
 
 A push implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
+**This project is a work in progress and does not work in it's current state**
 
 Usage:
 
@@ -10,7 +11,6 @@ Page.tml
     <t:zone 
         t:mixins="cometd/Push" 
         t:topic="publicChat"
-        t:privateTopic="privateChat${user.userId}"
         t:event="processChat" 
         t:append="true" 
         t:session="false"
@@ -42,10 +42,6 @@ ChatManager.java
        
         public void publicChat(String message) {
             pushManager.broadcast("publicChat", message);
-        }
-       
-        public void privateChat(String userId, String message) {
-            pushManager.service("privateChat" + userId, message);
         }
     }
 
