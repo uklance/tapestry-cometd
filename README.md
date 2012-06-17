@@ -1,7 +1,7 @@
 tapestry-cometd
 ===============
 
-A push implementation for [tapestry][http://tapestry.apache.org/] based on [cometd][http://cometd.org/]
+A push implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
 
 Usage:
 
