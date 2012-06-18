@@ -27,12 +27,12 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 		"classpath:/org/lazan/t5/cometd/TransportRegistry.js",
 		"classpath:/org/lazan/t5/cometd/Utils.js",
 		"classpath:/org/lazan/t5/cometd/WebSocketTransport.js",
+		"classpath:/org/lazan/t5/cometd/push.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-ack.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-reload.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timestamp.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timesync.js",
-		"classpath:/org/lazan/t5/cometd/push.js",
 })
 @MixinAfter
 public class Push {
@@ -69,9 +69,6 @@ public class Push {
 		ComponentResources containerResources = zoneResources.getContainerResources();
 		
 		String cometdPath = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
-		//String cometdPath = "http://localhost:8080/tapestry-sandbox/cometd"; // TODO
-		
-		//String completeId = zoneResources.getCompleteId();
 		String zoneClientId = zone.getClientId();
 		String channelId = String.format("/%s/%s", zoneResources.getCompleteId(), zoneClientId);
 		JSONObject spec = new JSONObject(
@@ -82,7 +79,9 @@ public class Push {
 				"eventType", event, // "chat"
 				"session", String.valueOf(session),
 				"channelId", channelId,
-				"topic", topic);
+				"topic", topic,
+				"append", String.valueOf(append),
+				"zoneId", zoneClientId);
 		jss.addInitializerCall("push", spec);
 		
 		//System.out.println(String.format("completeId: %s, clientId: %s, topic: %s, append: %s", completeId, zoneClientId, topic, append));

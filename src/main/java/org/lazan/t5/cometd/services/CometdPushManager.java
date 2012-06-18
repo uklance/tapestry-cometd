@@ -81,7 +81,6 @@ public class CometdPushManager implements PushManager {
 							// HttpSession not required, all subscribers share the same message
 							Map<String, String> message = new HashMap<String, String>();
 							String html = componentStringRenderer.render(eventParams);
-							//String html = "this is a test"; // TODO
 							message.put("content", html);
 							channel.publish(null, message, null);
 						}
