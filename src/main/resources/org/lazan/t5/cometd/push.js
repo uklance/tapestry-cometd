@@ -21,7 +21,8 @@ Tapestry.Initializer.push = function(spec)
 				//alert('message: ' + message.data.content);
 				var zoneId = spec.zoneId;
 				if (message.data.content) {
-					$('#' + zoneId).tapestryZone("applyContentUpdate", message.data.content);
+					var html = $('#' + zoneId).html() + message.data.content;
+					$('#' + zoneId).tapestryZone("applyContentUpdate", html);
 				} else if (message.data.zones) {
 					// perform multi zone update
 					/*
