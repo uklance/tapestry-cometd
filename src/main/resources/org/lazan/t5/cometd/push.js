@@ -1,21 +1,12 @@
 Tapestry.Initializer.push = function(spec)
 {
 	var cometd = $.cometd;
-    cometd.configure({url: spec.cometdPath, logLevel: 'debug'});
+    cometd.configure(spec.configureOptions);
 	cometd.addListener('/meta/handshake', function(handshake) {
 		if (handshake.successful === true) {
-			var data = {
-				activePageName: spec.activePageName,
-				containingPageName: spec.containingPageName,
-				nestedComponentId: spec.nestedComponentId,
-				eventType: spec.eventType,
-				session: spec.session,
-				channelId: spec.channelId,
-				topic: spec.topic
-			};
 			cometd.startBatch();
-			cometd.publish('/service/pushInit', data);
-			cometd.subscribe(spec.channelId, function(message) {
+			cometd.publish(spec.initChannelId, spec.initData);
+			cometd.subscribe(spec.initData.channelId, function(message) {
 				//alert('message: ' + message.data.content);
 				var clientId = spec.clientId;
 				if (message.data.content) {

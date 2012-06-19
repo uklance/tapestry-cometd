@@ -12,6 +12,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.lazan.t5.cometd.services.ChannelIdSource;
 
 @Import(library={
 		"classpath:/org/lazan/t5/cometd/cometd-namespace.js",
@@ -33,6 +34,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timesync.js",
 })
 public class Push extends Any	{
+	public static final String INIT_CHANNEL_ID = "/service/pushInit";
+	
     @Inject
     private ComponentResources resources;
 	
@@ -54,23 +57,37 @@ public class Push extends Any	{
 	@Inject
 	private BaseURLSource baseUrlSource;
 	
+	@Inject
+	private ChannelIdSource channelIdSource;
+	
     @BeginRender
 	void beginRender() {
-		String cometdPath = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
-		String clientId = getClientId();
-		String channelId = String.format("/%s/%s", resources.getCompleteId(), clientId);
-		JSONObject spec = new JSONObject(
-				"cometdPath", cometdPath,
-				"activePageName", resources.getPageName(), // PushDemo
-				"containingPageName", resources.getPageName(), // PushDemo
-				"nestedComponentId", resources.getNestedId(), // ""
-				"eventType", event, // "chat"
-				"session", String.valueOf(session),
-				"channelId", channelId,
-				"topic", topic,
-				"clientId", clientId);
+		JSONObject spec = new JSONObject();
+		spec.put("clientId",  getClientId());
+		spec.put("configureOptions", getConfigureOptions());
+		spec.put("initData", getInitData());
+		spec.put("initChannelId", INIT_CHANNEL_ID);
 		jss.addInitializerCall("push", spec);
-		
-		//System.out.println(String.format("completeId: %s, clientId: %s, topic: %s, append: %s", completeId, zoneClientId, topic, append));
 	}
+    
+    protected JSONObject getInitData() {
+    	String channelId = channelIdSource.getChannelId(resources, getClientId());
+    	return new JSONObject(
+			"activePageName", resources.getPageName(), // PushDemo
+			"containingPageName", resources.getPageName(), // PushDemo
+			"nestedComponentId", resources.getNestedId(), // ""
+			"eventType", event, // "chat"
+			"session", String.valueOf(session),
+			"channelId", channelId,
+			"topic", topic
+    	);
+    }
+    
+    protected JSONObject getConfigureOptions() {
+    	JSONObject json = new JSONObject();
+    	String url = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
+		json.put("url", url);
+		//json.put("logLevel", "debug");
+    	return json;
+    }
 }

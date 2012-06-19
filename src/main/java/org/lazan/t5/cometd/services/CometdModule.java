@@ -17,6 +17,7 @@ public class CometdModule {
 		binder.bind(BayeuxServletHttpServletRequestFilter.class, CometdHttpServletRequestFilter.class);
 		binder.bind(PushManager.class, CometdPushManager.class).eagerLoad();
 		binder.bind(ComponentStringRenderer.class, ComponentStringRendererImpl.class);
+		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
 	}
 
 	public static void contributeFactoryDefaults(MappedConfiguration<String, Object> config) {
