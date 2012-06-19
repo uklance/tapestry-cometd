@@ -5,34 +5,38 @@ Tapestry.Initializer.push = function(spec)
 	cometd.addListener('/meta/handshake', function(handshake) {
 		if (handshake.successful === true) {
 			cometd.startBatch();
-			cometd.publish(spec.initChannelId, spec.initData);
-			cometd.subscribe(spec.initData.channelId, function(message) {
-				//alert('message: ' + message.data.content);
-				var clientId = spec.clientId;
-				if (message.data.content) {
-					if (spec.update == 'APPEND') {
-						$('#' + clientId).append(message.data.content);
-					} else if (spec.update == 'PREPEND') {
-						$('#' + clientId).prepend(message.data.content);
-					} else {
-						$('#' + clientId).html(message.data.content);
-					}
-				} else if (message.data.zones) {
-					// perform multi zone update
-					/*
-					$.each(message.data.zones, function(clientId, content){
-						if (clientId === "" || ! $('#' + clientId).length) {
-							that.applyContentUpdate(content);
+			var subSpecs = spec.subSpecs;
+			for (var i = 0; i < subSpecs.length; ++i) {
+				var subSpec = subSpecs[i];
+				cometd.publish(spec.initChannelId, subSpec.initData);
+				cometd.subscribe(subSpec.initData.channelId, function(message) {
+					//alert('message: ' + message.data.content);
+					var clientId = subSpec.clientId;
+					if (message.data.content) {
+						if (subSpec.update == 'APPEND') {
+							$('#' + clientId).append(message.data.content);
+						} else if (subSpec.update == 'PREPEND') {
+							$('#' + clientId).prepend(message.data.content);
 						} else {
-							$('#' + clientId).tapestryZone("applyContentUpdate", content);
+							$('#' + clientId).html(message.data.content);
 						}
-					});
-					*/
-					// TODO
-				}
-				//TODO
-				//$.tapestry.utils.loadScriptsInReply(message.data, specs.callback);
-			});
+					} else if (message.data.zones) {
+						// perform multi zone update
+						/*
+						$.each(message.data.zones, function(clientId, content){
+							if (clientId === "" || ! $('#' + clientId).length) {
+								that.applyContentUpdate(content);
+							} else {
+								$('#' + clientId).tapestryZone("applyContentUpdate", content);
+							}
+						});
+						*/
+						// TODO
+					}
+					//TODO
+					//$.tapestry.utils.loadScriptsInReply(message.data, specs.callback);
+				});
+			}
 			cometd.endBatch();
 		}
 	});
