@@ -26,26 +26,6 @@ Page.tml
 
 Page.java
 
-    public class Page {
-        @Property
-        private String chatMessage;
-        
-        @SessionState
-        @Property
-        private User user;
-        
-        @Inject
-        private Block messageBlock;
-        
-        @OnEvent("processChat")
-        Block onProcessChat(String chatMessage) {
-            this.chatMessage = chatMessage;
-            return messageBlock;
-        }
-    }
-    
-ChatManager.java
-
     public class PushDemo {
         @InjectComponent
     	private Zone formZone;
