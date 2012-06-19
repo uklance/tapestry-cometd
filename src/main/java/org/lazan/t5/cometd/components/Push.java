@@ -60,6 +60,9 @@ public class Push extends Any	{
 	@Inject
 	private ChannelIdSource channelIdSource;
 	
+	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:UPDATE")
+	private String update;
+	
     @BeginRender
 	void beginRender() {
 		JSONObject spec = new JSONObject();
@@ -67,6 +70,7 @@ public class Push extends Any	{
 		spec.put("configureOptions", getConfigureOptions());
 		spec.put("initData", getInitData());
 		spec.put("initChannelId", INIT_CHANNEL_ID);
+		spec.put("update", update);
 		jss.addInitializerCall("push", spec);
 	}
     

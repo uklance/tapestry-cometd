@@ -10,7 +10,13 @@ Tapestry.Initializer.push = function(spec)
 				//alert('message: ' + message.data.content);
 				var clientId = spec.clientId;
 				if (message.data.content) {
-					var html = $('#' + clientId).append(message.data.content);
+					if (spec.update == 'APPEND') {
+						$('#' + clientId).append(message.data.content);
+					} else if (spec.update == 'PREPEND') {
+						$('#' + clientId).prepend(message.data.content);
+					} else {
+						$('#' + clientId).html(message.data.content);
+					}
 				} else if (message.data.zones) {
 					// perform multi zone update
 					/*
