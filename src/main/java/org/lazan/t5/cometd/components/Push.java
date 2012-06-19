@@ -1,4 +1,4 @@
-package org.lazan.t5.cometd.mixins;
+package org.lazan.t5.cometd.components;
 
 import javax.inject.Inject;
 
@@ -6,10 +6,8 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectContainer;
-import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.corelib.components.Any;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
@@ -34,22 +32,15 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timestamp.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timesync.js",
 })
-@MixinAfter
-public class Push {
-	@Inject
-	private ComponentResources mixinResources;
+public class Push extends Any	{
+    @Inject
+    private ComponentResources resources;
 	
-	@InjectContainer
-	private Zone zone;
-	
-	@Inject
+    @Inject
 	private JavaScriptSupport jss;
 	
 	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
 	private String topic;
-	
-	@Parameter(value="literal:true")
-	private boolean append;
 	
 	@Parameter
 	private boolean session;
@@ -63,25 +54,21 @@ public class Push {
 	@Inject
 	private BaseURLSource baseUrlSource;
 	
-	@BeginRender
+    @BeginRender
 	void beginRender() {
-		ComponentResources zoneResources = mixinResources.getContainerResources();
-		ComponentResources containerResources = zoneResources.getContainerResources();
-		
 		String cometdPath = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
-		String zoneClientId = zone.getClientId();
-		String channelId = String.format("/%s/%s", zoneResources.getCompleteId(), zoneClientId);
+		String clientId = getClientId();
+		String channelId = String.format("/%s/%s", resources.getCompleteId(), clientId);
 		JSONObject spec = new JSONObject(
 				"cometdPath", cometdPath,
-				"activePageName", containerResources.getPageName(), // PushDemo
-				"containingPageName", containerResources.getPageName(), // PushDemo
-				"nestedComponentId", containerResources.getNestedId(), // ""
+				"activePageName", resources.getPageName(), // PushDemo
+				"containingPageName", resources.getPageName(), // PushDemo
+				"nestedComponentId", resources.getNestedId(), // ""
 				"eventType", event, // "chat"
 				"session", String.valueOf(session),
 				"channelId", channelId,
 				"topic", topic,
-				"append", String.valueOf(append),
-				"zoneId", zoneClientId);
+				"clientId", clientId);
 		jss.addInitializerCall("push", spec);
 		
 		//System.out.println(String.format("completeId: %s, clientId: %s, topic: %s, append: %s", completeId, zoneClientId, topic, append));

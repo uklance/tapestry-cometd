@@ -1,8 +1,6 @@
 Tapestry.Initializer.push = function(spec)
 {
 	var cometd = $.cometd;
-    cometd.registerTransport('long-polling', new org.cometd.LongPollingTransport());
-    cometd.registerTransport('callback-polling', new org.cometd.CallbackPollingTransport());
     cometd.configure({url: spec.cometdPath, logLevel: 'debug'});
 	cometd.addListener('/meta/handshake', function(handshake) {
 		if (handshake.successful === true) {
@@ -19,18 +17,17 @@ Tapestry.Initializer.push = function(spec)
 			cometd.publish('/service/pushInit', data);
 			cometd.subscribe(spec.channelId, function(message) {
 				//alert('message: ' + message.data.content);
-				var zoneId = spec.zoneId;
+				var clientId = spec.clientId;
 				if (message.data.content) {
-					var html = $('#' + zoneId).html() + message.data.content;
-					$('#' + zoneId).tapestryZone("applyContentUpdate", html);
+					var html = $('#' + clientId).append(message.data.content);
 				} else if (message.data.zones) {
 					// perform multi zone update
 					/*
-					$.each(message.data.zones, function(zoneId, content){
-						if (zoneId === "" || ! $('#' + zoneId).length) {
+					$.each(message.data.zones, function(clientId, content){
+						if (clientId === "" || ! $('#' + clientId).length) {
 							that.applyContentUpdate(content);
 						} else {
-							$('#' + zoneId).tapestryZone("applyContentUpdate", content);
+							$('#' + clientId).tapestryZone("applyContentUpdate", content);
 						}
 					});
 					*/
