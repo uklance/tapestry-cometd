@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.BeforeRenderBody;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
@@ -20,6 +19,8 @@ import org.lazan.t5.cometd.PushSupport;
 import org.lazan.t5.cometd.PushSupportImpl;
 import org.lazan.t5.cometd.services.ChannelIdSource;
 
+/*
+ */
 @Import(library={
 		"classpath:/org/lazan/t5/cometd/cometd-namespace.js",
 		"classpath:/org/lazan/t5/cometd/cometd-header.js",
@@ -30,8 +31,12 @@ import org.lazan.t5.cometd.services.ChannelIdSource;
 		"classpath:/org/lazan/t5/cometd/RequestTransport.js",
 		"classpath:/org/lazan/t5/cometd/Transport.js",
 		"classpath:/org/lazan/t5/cometd/TransportRegistry.js",
-		"classpath:/org/lazan/t5/cometd/Utils.js",
 		"classpath:/org/lazan/t5/cometd/WebSocketTransport.js",
+		"classpath:/org/lazan/t5/cometd/Utils.js",
+		"classpath:/org/lazan/t5/cometd/AckExtension.js",
+		"classpath:/org/lazan/t5/cometd/ReloadExtension.js",
+		"classpath:/org/lazan/t5/cometd/TimeStampExtension.js",
+		"classpath:/org/lazan/t5/cometd/TimeSyncExtension.js",
 		"classpath:/org/lazan/t5/cometd/push.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-ack.js",
