@@ -19,7 +19,9 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.ServerChannel;
+import org.cometd.bayeux.server.BayeuxServer.ChannelListener;
 import org.cometd.bayeux.server.ServerChannel.MessageListener;
 import org.cometd.bayeux.server.ServerMessage.Mutable;
 import org.cometd.bayeux.server.ServerSession;
@@ -40,6 +42,7 @@ public class CometdPushManager implements PushManager {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.createIfAbsent(INIT_CHANNEL);
 		this.bayeuxServer.getChannel(INIT_CHANNEL).addListener(new PushInitListener());
+		this.bayeuxServer.addListener(new DisconnectListener());
 		this.logger = logger;
 		this.componentStringRenderer = componentStringRenderer;
 		this.typeCoercer = typeCoercer;
@@ -146,6 +149,27 @@ public class CometdPushManager implements PushManager {
 				serverSession.setAttribute("sessionRef", sessionRef);
 			}
 			return true;
+		}
+	}
+	
+	public class DisconnectListener implements ChannelListener {
+		public void channelAdded(ServerChannel channel) {
+		}
+		
+		/**
+		 * Cleans up maps to avoid memory leaks
+		 * TODO: There are race conditions which could cause this to result in an invalid state
+		 */
+		public void channelRemoved(String channelId) {
+			logger.info("Cleaning up channel {}", channelId);
+			zoneContextByChannelId.remove(channelId);
+			
+			// TODO: map lookup
+			for (Set<String> topicChannelIds : channelIdsByTopic.values()) {
+				topicChannelIds.remove(channelId);
+			}
+		}
+		public void configureChannel(ConfigurableServerChannel channel) {
 		}
 	}
 }
