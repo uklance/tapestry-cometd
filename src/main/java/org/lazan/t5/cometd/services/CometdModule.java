@@ -16,7 +16,7 @@ public class CometdModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(BayeuxServletHttpServletRequestFilter.class, CometdHttpServletRequestFilter.class);
 		binder.bind(PushManager.class, CometdPushManager.class).eagerLoad();
-		binder.bind(ComponentStringRenderer.class, ComponentStringRendererImpl.class);
+		binder.bind(ComponentJsonRenderer.class, ComponentJsonRendererImpl.class);
 		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
 	}
 

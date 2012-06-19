@@ -16,6 +16,7 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerChannel;
@@ -27,7 +28,7 @@ import org.slf4j.Logger;
 public class CometdPushManager implements PushManager {
 	private final BayeuxServer bayeuxServer;
 	private final Logger logger;
-	private final ComponentStringRenderer componentStringRenderer;
+	private final ComponentJsonRenderer componentStringRenderer;
 	private final TypeCoercer typeCoercer;
 	private final HttpServletRequest request;
 	private final ConcurrentMap<String, Set<String>> channelIdsByTopic = new ConcurrentHashMap<String, Set<String>>();
@@ -35,7 +36,7 @@ public class CometdPushManager implements PushManager {
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
 	private static final String INIT_CHANNEL = "/service/pushInit";
 	
-	public CometdPushManager(BayeuxServer bayeuxServer, Logger logger, ComponentStringRenderer componentStringRenderer, TypeCoercer typeCoercer, HttpServletRequest request) {
+	public CometdPushManager(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer, TypeCoercer typeCoercer, HttpServletRequest request) {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.createIfAbsent(INIT_CHANNEL);
 		this.bayeuxServer.getChannel(INIT_CHANNEL).addListener(new PushInitListener());
@@ -64,31 +65,39 @@ public class CometdPushManager implements PushManager {
 								new ArrayEventContext(typeCoercer, context)
 						);
 						if (clientContext.isSession()) {
-							// component rendering requires the HttpSession so each subscriber requires it's own render of the component
-							for (ServerSession subscriber : channel.getSubscribers()) {
-								WeakReference<HttpSession> sessionRef = (WeakReference<HttpSession>) subscriber.getAttribute("sessionRef");
-								HttpSession session = sessionRef == null ? null : sessionRef.get();
-								if (session == null) {
-									logger.error("No session reference for channelId {}, serverSession {}", channelId, subscriber.getId());
-								} else {
-									String html = componentStringRenderer.render(eventParams);
-									Map<String, String> message = new HashMap<String, String>();
-									message.put("content", html);
-									subscriber.deliver(null, channelId, message, null);
-								}
-							}
+							deliverSessionMessages(channel, eventParams);
 						} else {
-							// HttpSession not required, all subscribers share the same message
-							Map<String, String> message = new HashMap<String, String>();
-							String html = componentStringRenderer.render(eventParams);
-							message.put("content", html);
-							channel.publish(null, message, null);
+							deliverNonSessionMessages(channel, eventParams);
 						}
 					}
 				}
 			}
 		} else {
 			logger.info("No channels for {}", topic);
+		}
+	}
+
+	private void deliverNonSessionMessages(ServerChannel channel, ComponentEventRequestParameters eventParams) {
+		// HttpSession not required, all subscribers share the same message
+		JSONObject json = componentStringRenderer.render(eventParams);
+		Map<String, String> message = new HashMap<String, String>();
+		message.put("content", json.getString("content"));
+		channel.publish(null, message, null);
+	}
+
+	private void deliverSessionMessages(ServerChannel channel, ComponentEventRequestParameters eventParams) {
+		// component rendering requires the HttpSession so each subscriber requires it's own render of the component
+		for (ServerSession subscriber : channel.getSubscribers()) {
+			WeakReference<HttpSession> sessionRef = (WeakReference<HttpSession>) subscriber.getAttribute("sessionRef");
+			HttpSession session = sessionRef == null ? null : sessionRef.get();
+			if (session == null) {
+				logger.error("No session reference for channelId {}, serverSession {}", channel.getId(), subscriber.getId());
+			} else {
+				JSONObject json = componentStringRenderer.render(eventParams);
+				Map<String, String> message = new HashMap<String, String>();
+				message.put("content", json.getString("content"));
+				subscriber.deliver(null, channel.getId(), message, null);
+			}
 		}
 	}
 	
