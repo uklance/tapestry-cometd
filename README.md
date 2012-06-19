@@ -3,22 +3,26 @@ tapestry-cometd
 
 A push implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
 
-<font color="red">This project is a work in progress and does not work in it's current state</font>
-
 Usage:
 
 Page.tml
 
-    <t:zone 
-        t:mixins="cometd/Push" 
-        t:topic="publicChat"
-        t:event="processChat" 
-        t:append="true" 
-        t:session="false"
-    />
-    <t:block t:id="messageBlock">
-        ${chatMessage}
-    </t:block>
+    <html 
+          xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+          xmlns:p="tapestry:parameter">
+    
+    	<t:block t:id="messageBlock">
+    		<h2>1: ${message}</h2>
+    	</t:block>
+    
+    	<t:zone t:id="formZone" id="formZone">
+    		<form t:id="ajaxForm" t:type="form" t:zone="formZone">
+    			Message: <input t:type="TextField" t:id="message" /><input type="submit" value="Send"/>
+    		</form>
+    	</t:zone>
+    
+    	<t:cometd.push topic="chatTopic" event="chat" style="border: 1px solid" update="APPEND" />
+    </html>
 
 Page.java
 
@@ -42,12 +46,26 @@ Page.java
     
 ChatManager.java
 
-    public class ChatManager {
-        @Inject
-        private PushManager pushManager;
-       
-        public void publicChat(String message) {
-            pushManager.broadcast("publicChat", message);
-        }
+    public class PushDemo {
+        @InjectComponent
+    	private Zone formZone;
+    	
+    	@Inject
+    	private Block messageBlock;
+    
+    	@Property
+    	private String message;
+    	
+    	@Inject
+    	private PushManager pushManager;
+    	
+    	Block onChat(String message) {
+    		this.message = message;
+    		return messageBlock;
+    	}
+    
+    	Block onSuccess() {
+    		pushManager.broadcast(topic, message);
+    		return formZone.getBody();
+    	}
     }
-
