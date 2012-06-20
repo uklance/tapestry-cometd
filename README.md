@@ -44,7 +44,7 @@ public class PushDemo {
 	@Inject
 	private PushManager pushManager;
 	
-	// this event is when a message broadcast on the 'chatTopic' topic
+	// this event is fired when a message received on the 'chatTopic' topic
 	Block onChat(String message) {
 		this.message = message;
 		return messageBlock;
