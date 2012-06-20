@@ -1,9 +1,9 @@
 tapestry-cometd
 ===============
 
-A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
+### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
 
-Features:
+## Features:
 * Zero javascript required
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Fully configurable
@@ -14,7 +14,7 @@ Features:
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
 
-Usage:
+## Usage:
 
 Page.tml
 ```xml
