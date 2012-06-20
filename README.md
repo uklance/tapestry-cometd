@@ -11,17 +11,20 @@ Page.tml
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
       xmlns:p="tapestry:parameter">
 
-	<t:block t:id="messageBlock">
-		<h2>1: ${message}</h2>
-	</t:block>
-
 	<t:zone t:id="formZone" id="formZone">
+		<!-- type a chat message in this form -->
 		<form t:id="ajaxForm" t:type="form" t:zone="formZone">
 			Message: <input t:type="TextField" t:id="message" /><input type="submit" value="Send"/>
 		</form>
 	</t:zone>
 
-	<t:cometd.push topic="chatTopic" event="chat" style="border: 1px solid" update="APPEND" />
+	<!-- all chats messages will be appended to this div -->
+	<t:cometd.push topic="chatTopic" event="chat" update="APPEND" />
+
+	<!-- this template is applied to each chat message -->
+	<t:block t:id="messageBlock">
+		<h2>1: ${message}</h2>
+	</t:block>
 </html>
 ```
 
