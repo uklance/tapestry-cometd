@@ -13,8 +13,8 @@ tapestry-cometd
 * Topic abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Allows multiple subscriptions to a single topic with custom processing/template
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
-* Custom authorization (TODO)
-* Custom message listeners (TODO)
+* Custom authorization ([TODO](https://github.com/uklance/tapestry-cometd/issues/21))
+* Custom message listeners ([TODO](https://github.com/uklance/tapestry-cometd/issues/21))
 
 ## Usage:
 
