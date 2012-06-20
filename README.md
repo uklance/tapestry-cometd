@@ -18,7 +18,7 @@ Page.tml
 		</form>
 	</t:zone>
 
-	<!-- all chats messages will be appended to this div -->
+	<!-- this component subscribes to the chat topic and appends the messages this element -->
 	<t:cometd.push topic="chatTopic" event="chat" update="APPEND" />
 
 	<!-- this template is applied to each chat message -->
