@@ -44,13 +44,16 @@ public class PushDemo {
 	@Inject
 	private PushManager pushManager;
 	
+	// this event is when a message broadcast on the 'chatTopic' topic
 	Block onChat(String message) {
 		this.message = message;
 		return messageBlock;
 	}
 
+	// this event is fired the form is posted
 	Block onSuccess() {
-		pushManager.broadcast(topic, message);
+		// broadcast the message on the 'chatTopic' topic
+		pushManager.broadcast("chatTopic", message);
 		return formZone.getBody();
 	}
 }
