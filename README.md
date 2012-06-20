@@ -1,17 +1,17 @@
 tapestry-cometd
 ===============
 
-### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
+### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [Tapestry](http://tapestry.apache.org/) based on [Cometd](http://cometd.org/)
 
 ## Features:
-* Zero javascript required
+* Zero Javascript required
 * Fully configurable
 * Use [Tapestry templates](http://tapestry.apache.org/component-templates.html) to format incoming messages
-* [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use Strings or custom objects)
-* Build on top of the rock solid [cometd](http://cometd.org/) library
+* [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use strings or custom objects)
+* Build on top of the rock solid [Cometd](http://cometd.org/) library
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
-* Topic abstraction (on top of [cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
-* Multiple subscriptions to the same topic with different processing/template
+* Topic abstraction (on top of [Cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
+* Allows multiple subscriptions to a single topic with custom processing/template
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
