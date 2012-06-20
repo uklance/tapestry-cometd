@@ -7,7 +7,7 @@ tapestry-cometd
 * Zero javascript required
 * Fully configurable
 * Use [Tapestry templates](http://tapestry.apache.org/component-templates.html) to format incoming messages
-* POJO messages (use Strings or custom objects)
+* [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use Strings or custom objects)
 * Build on top of the rock solid [cometd](http://cometd.org/) library
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Topic abstraction (on top of [cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
