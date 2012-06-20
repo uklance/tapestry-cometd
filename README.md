@@ -8,7 +8,8 @@ Features:
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Fully configurable
 * Topic abstraction (on top of cometd channels)
-* Use [Tapestry's templating](http://tapestry.apache.org/component-templates.html) to format messages
+* Use Tapestry templates(http://tapestry.apache.org/component-templates.html) to format incoming messages
+* POJO messages (use Strings or custom objects)
 * Multiple subscriptions to the same topic with different processing/template
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
