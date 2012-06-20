@@ -18,10 +18,10 @@ Page.tml
 		</form>
 	</t:zone>
 
-	<!-- this component subscribes to the chat topic and appends the messages this element -->
+	<!-- this component subscribes to the 'chatTopic' topic and appends received messages to itself -->
 	<t:cometd.push topic="chatTopic" event="chat" update="APPEND" />
 
-	<!-- this template is applied to each chat message -->
+	<!-- this template is applied to each chat message when it is received -->
 	<t:block t:id="messageBlock">
 		<h2>1: ${message}</h2>
 	</t:block>
