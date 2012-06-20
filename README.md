@@ -1,16 +1,16 @@
 tapestry-cometd
 ===============
 
-### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [Tapestry](http://tapestry.apache.org/) based on [Cometd](http://cometd.org/)
+### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [Tapestry](http://tapestry.apache.org/) based on [CometD](http://cometd.org/)
 
 ## Features:
 * Zero Javascript required
 * Fully configurable
 * Use [Tapestry templates](http://tapestry.apache.org/component-templates.html) to format incoming messages
 * [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use strings or custom objects)
-* Build on top of the rock solid [Cometd](http://cometd.org/) library
+* Build on top of the rock solid [CometD](http://cometd.org/) library
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
-* Topic abstraction (on top of [Cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
+* Topic abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Allows multiple subscriptions to a single topic with custom processing/template
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
 * Custom authorization (TODO)
