@@ -50,7 +50,7 @@ public class PushDemo {
 		return messageBlock;
 	}
 
-	// this event is fired the form is posted
+	// this event is fired when the form is posted
 	Block onSuccess() {
 		// broadcast the message on the 'chatTopic' topic
 		pushManager.broadcast("chatTopic", message);
