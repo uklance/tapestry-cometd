@@ -5,11 +5,12 @@ tapestry-cometd
 
 ## Features:
 * Zero javascript required
-* Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Fully configurable
-* Topic abstraction (on top of cometd channels)
 * Use [Tapestry templates](http://tapestry.apache.org/component-templates.html) to format incoming messages
 * POJO messages (use Strings or custom objects)
+* Build on top of the rock solid [cometd](http://cometd.org/) library
+* Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
+* Topic abstraction (on top of [cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Multiple subscriptions to the same topic with different processing/template
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
