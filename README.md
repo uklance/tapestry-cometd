@@ -12,7 +12,7 @@ tapestry-cometd
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Topic abstraction (on top of [cometd channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Multiple subscriptions to the same topic with different processing/template
-* Append or prepend incoming messages to an html element or replace the element contents for each message.
+* Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
 
