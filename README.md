@@ -3,6 +3,16 @@ tapestry-cometd
 
 A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [tapestry](http://tapestry.apache.org/) based on [cometd](http://cometd.org/)
 
+Features:
+* Zero javascript required
+* Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
+* Fully configurable
+* Topic abstraction (on top of cometd channels)
+* Use [Tapestry's templating](http://tapestry.apache.org/component-templates.html) to format messages
+* Multiple subscriptions to the same topic with different processing/template
+* Custom authorization (TODO)
+* Custom message listeners (TODO)
+
 Usage:
 
 Page.tml
