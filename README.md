@@ -14,6 +14,7 @@ tapestry-cometd
 * Multiple subscriptions to the same topic with different processing/template
 * Custom authorization (TODO)
 * Custom message listeners (TODO)
+* Append or prepend incoming messages to an html element or replace the element contents for each message.
 
 ## Usage:
 
