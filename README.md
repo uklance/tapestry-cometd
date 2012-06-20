@@ -23,7 +23,7 @@ Page.tml
 
 	<!-- this template is applied to each chat message when it is received -->
 	<t:block t:id="messageBlock">
-		<h2>1: ${message}</h2>
+		<h2>${message}</h2>
 	</t:block>
 </html>
 ```
