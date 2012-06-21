@@ -110,4 +110,4 @@ Download the tapestry-cometd-demo from [here](https://github.com/uklance/tapestr
 ```
 mvn jetty:run
 ```
-After jetty starts, point your browser to https://github.com/uklance/tapestry-cometd-demo
+After jetty starts, point your browser to http://localhost:8080/tapestry-cometd-demo/Stocks
