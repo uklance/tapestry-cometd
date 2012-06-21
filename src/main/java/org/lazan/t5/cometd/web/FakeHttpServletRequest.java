@@ -155,7 +155,7 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	}
 
 	public String getContextPath() {
-		throw new UnsupportedOperationException("getContextPath");
+		return contextPath;
 	}
 
 	public Cookie[] getCookies() {
