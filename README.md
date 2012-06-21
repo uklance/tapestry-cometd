@@ -70,3 +70,36 @@ public class PushDemo {
 	}
 }
 ```
+
+Maven
+```xml
+<dependencies>
+	<dependency>
+		<groupId>org.lazan</groupId>
+		<artifactId>tapestry-cometd</artifactId>
+		<version>0.9</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.got5</groupId>
+		<artifactId>tapestry5-jquery</artifactId>
+		<version>3.0.0</version>
+	</dependency>
+</dependencies>
+
+...
+
+<repositories>
+	<repository>
+		<id>tapestry-cometd</id>
+		<url>https://github.com/uklance/releases/raw/master</url>
+	</repository>
+	<repository>
+		<id>devlab722-repo</id>
+		<url>http://nexus.devlab722.net/nexus/content/repositories/releases</url>
+		<snapshots>
+			<enabled>false</enabled>
+		</snapshots>
+	</repository>
+</repositories>
+```
