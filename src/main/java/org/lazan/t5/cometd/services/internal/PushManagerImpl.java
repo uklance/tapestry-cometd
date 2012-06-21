@@ -1,13 +1,9 @@
-package org.lazan.t5.cometd.services;
+package org.lazan.t5.cometd.services.internal;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,26 +15,30 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.BayeuxServer.ChannelListener;
 import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.ServerChannel;
-import org.cometd.bayeux.server.BayeuxServer.ChannelListener;
 import org.cometd.bayeux.server.ServerChannel.MessageListener;
 import org.cometd.bayeux.server.ServerMessage.Mutable;
 import org.cometd.bayeux.server.ServerSession;
+import org.lazan.t5.cometd.ClientContext;
+import org.lazan.t5.cometd.services.CometdGlobals;
+import org.lazan.t5.cometd.services.ComponentJsonRenderer;
+import org.lazan.t5.cometd.services.PushManager;
 import org.slf4j.Logger;
 
-public class CometdPushManager implements PushManager {
+public class PushManagerImpl implements PushManager {
 	private final BayeuxServer bayeuxServer;
 	private final Logger logger;
 	private final ComponentJsonRenderer componentStringRenderer;
 	private final TypeCoercer typeCoercer;
+	private final CometdGlobals cometdGlobals;
 	private final HttpServletRequest request;
-	private final ConcurrentMap<String, Set<String>> channelIdsByTopic = new ConcurrentHashMap<String, Set<String>>();
-	private final ConcurrentMap<String, ClientContext> zoneContextByChannelId = new ConcurrentHashMap<String, ClientContext>();
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
 	private static final String INIT_CHANNEL = "/service/pushInit";
-	
-	public CometdPushManager(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer, TypeCoercer typeCoercer, HttpServletRequest request) {
+
+	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer,
+			TypeCoercer typeCoercer, HttpServletRequest request, CometdGlobals cometdGlobals) {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.createIfAbsent(INIT_CHANNEL);
 		this.bayeuxServer.getChannel(INIT_CHANNEL).addListener(new PushInitListener());
@@ -47,26 +47,23 @@ public class CometdPushManager implements PushManager {
 		this.componentStringRenderer = componentStringRenderer;
 		this.typeCoercer = typeCoercer;
 		this.request = request;
+		this.cometdGlobals = cometdGlobals;
 	}
 
 	public void broadcast(final String topic, Object... context) {
-		Collection<String> channelIds = channelIdsByTopic.get(topic);
+		Collection<String> channelIds = cometdGlobals.getChannelIds(topic);
 		if (channelIds != null) {
 			for (String channelId : channelIds) {
 				ServerChannel channel = bayeuxServer.getChannel(channelId);
 				if (channel != null) {
-					ClientContext clientContext = zoneContextByChannelId.get(channelId);
+					ClientContext clientContext = cometdGlobals.getClientContext(channelId);
 					if (clientContext == null) {
 						logger.error("ClientContext unknown for channelId {}", channelId);
 					} else {
 						ComponentEventRequestParameters eventParams = new ComponentEventRequestParameters(
-								clientContext.getActivePageName(),
-								clientContext.getContainingPageName(),
-								clientContext.getNestedComponentId(),
-								clientContext.getEventType(),
-								EMPTY_EVENT_CONTEXT,
-								new ArrayEventContext(typeCoercer, context)
-						);
+								clientContext.getActivePageName(), clientContext.getContainingPageName(),
+								clientContext.getNestedComponentId(), clientContext.getEventType(), EMPTY_EVENT_CONTEXT,
+								new ArrayEventContext(typeCoercer, context));
 						if (clientContext.isSession()) {
 							deliverSessionMessages(channel, eventParams);
 						} else {
@@ -89,7 +86,8 @@ public class CometdPushManager implements PushManager {
 	}
 
 	private void deliverSessionMessages(ServerChannel channel, ComponentEventRequestParameters eventParams) {
-		// component rendering requires the HttpSession so each subscriber requires it's own render of the component
+		// component rendering requires the HttpSession so each subscriber
+		// requires it's own render of the component
 		for (ServerSession subscriber : channel.getSubscribers()) {
 			WeakReference<HttpSession> sessionRef = (WeakReference<HttpSession>) subscriber.getAttribute("sessionRef");
 			HttpSession session = sessionRef == null ? null : sessionRef.get();
@@ -103,11 +101,11 @@ public class CometdPushManager implements PushManager {
 			}
 		}
 	}
-	
+
 	public void service(final String clientId, Object... context) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	private String getRequiredString(Map<String, Object> data, String key) {
 		String value = (String) data.get(key);
 		if (value == null) {
@@ -122,28 +120,18 @@ public class CometdPushManager implements PushManager {
 			boolean session = "true".equals(getRequiredString(data, "session"));
 			String channelId = getRequiredString(data, "channelId");
 			String topic = getRequiredString(data, "topic");
-			Set<String> channelIds = channelIdsByTopic.get(topic);
-			if (channelIds == null) {
-				Set<String> tempChannelIds = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-				channelIds = channelIdsByTopic.putIfAbsent(topic, tempChannelIds);
-				if (channelIds == null) {
-					channelIds = tempChannelIds;
-				}
+
+			String activePageName = getRequiredString(data, "activePageName");
+			String containingPageName = getRequiredString(data, "containingPageName");
+			String nestedComponentId = (String) data.get("nestedComponentId");
+			if (nestedComponentId == null) {
+				nestedComponentId = "";
 			}
-			channelIds.add(channelId);
-			
-			if (!zoneContextByChannelId.containsKey(channelId)) {
-				String activePageName = getRequiredString(data, "activePageName");
-				String containingPageName = getRequiredString(data, "containingPageName");
-				String nestedComponentId = (String) data.get("nestedComponentId");
-				if (nestedComponentId == null) {
-					nestedComponentId = "";
-				}
-				String eventType = getRequiredString(data, "eventType");
-				
-				ClientContext zoneContext = new ClientContext(session, activePageName, containingPageName, nestedComponentId, eventType);
-				zoneContextByChannelId.put(channelId, zoneContext);
-			}
+			String eventType = getRequiredString(data, "eventType");
+
+			ClientContext clientContext = new ClientContext(session, activePageName, containingPageName, nestedComponentId, eventType);
+			cometdGlobals.setClientContext(topic, channelId, clientContext);
+
 			if (session) {
 				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
 				serverSession.setAttribute("sessionRef", sessionRef);
@@ -151,24 +139,20 @@ public class CometdPushManager implements PushManager {
 			return true;
 		}
 	}
-	
+
 	public class DisconnectListener implements ChannelListener {
 		public void channelAdded(ServerChannel channel) {
 		}
-		
+
 		/**
-		 * Cleans up maps to avoid memory leaks
-		 * TODO: There are race conditions which could cause this to result in an invalid state
+		 * Cleans up maps to avoid memory leaks TODO: There are race conditions
+		 * which could cause this to result in an invalid state
 		 */
 		public void channelRemoved(String channelId) {
 			logger.info("Cleaning up channel {}", channelId);
-			zoneContextByChannelId.remove(channelId);
-			
-			// TODO: map lookup
-			for (Set<String> topicChannelIds : channelIdsByTopic.values()) {
-				topicChannelIds.remove(channelId);
-			}
+			cometdGlobals.removeChannel(channelId);
 		}
+
 		public void configureChannel(ConfigurableServerChannel channel) {
 		}
 	}

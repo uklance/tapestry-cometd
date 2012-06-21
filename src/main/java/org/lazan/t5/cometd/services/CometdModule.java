@@ -8,6 +8,10 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
+import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
+import org.lazan.t5.cometd.services.internal.PushManagerImpl;
+import org.lazan.t5.cometd.services.internal.ComponentJsonRendererImpl;
 import org.lazan.t5.cometd.web.BayeuxServletHttpServletRequestFilter;
 import org.lazan.t5.cometd.web.CometdHttpServletRequestFilter;
 import org.slf4j.Logger;
@@ -15,9 +19,10 @@ import org.slf4j.Logger;
 public class CometdModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(BayeuxServletHttpServletRequestFilter.class, CometdHttpServletRequestFilter.class);
-		binder.bind(PushManager.class, CometdPushManager.class).eagerLoad();
+		binder.bind(PushManager.class, PushManagerImpl.class).eagerLoad();
 		binder.bind(ComponentJsonRenderer.class, ComponentJsonRendererImpl.class);
 		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
+		binder.bind(CometdGlobals.class, CometdGlobalsImpl.class);
 	}
 
 	public static void contributeFactoryDefaults(MappedConfiguration<String, Object> config) {

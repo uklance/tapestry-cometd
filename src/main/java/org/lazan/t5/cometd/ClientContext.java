@@ -1,4 +1,4 @@
-package org.lazan.t5.cometd.services;
+package org.lazan.t5.cometd;
 
 
 public class ClientContext {

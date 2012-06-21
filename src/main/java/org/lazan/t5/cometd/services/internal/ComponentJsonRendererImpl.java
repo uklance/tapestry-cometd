@@ -1,4 +1,4 @@
-package org.lazan.t5.cometd.services;
+package org.lazan.t5.cometd.services.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.Future;
@@ -22,6 +22,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
+import org.lazan.t5.cometd.services.ComponentJsonRenderer;
 import org.lazan.t5.cometd.web.FakeHttpServletRequest;
 import org.lazan.t5.cometd.web.FakeHttpServletResponse;
 

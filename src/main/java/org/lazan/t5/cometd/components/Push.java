@@ -16,7 +16,7 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.lazan.t5.cometd.PushSupport;
-import org.lazan.t5.cometd.PushSupportImpl;
+import org.lazan.t5.cometd.internal.PushSupportImpl;
 import org.lazan.t5.cometd.services.ChannelIdSource;
 
 /*
