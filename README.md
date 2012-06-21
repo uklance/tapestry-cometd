@@ -31,7 +31,7 @@ Page.tml
 	</t:zone>
 
 	<!-- this component subscribes to the 'chatTopic' topic and appends received messages to itself -->
-	<t:cometd.push topic="chatTopic" event="chat" update="APPEND" />
+	<t:cometd.PushTarget topic="chatTopic" event="chat" update="APPEND" />
 
 	<!-- this template is applied to each chat message when it is received -->
 	<t:block t:id="messageBlock">
@@ -110,4 +110,8 @@ Download the tapestry-cometd-demo from [here](https://github.com/uklance/tapestr
 ```
 mvn jetty:run
 ```
-After jetty starts, point your browser to http://localhost:8080/tapestry-cometd-demo/Stocks
+After jetty starts, point your browser to 
+* http://localhost:8080/tapestry-cometd-demo/Stocks
+* http://localhost:8080/tapestry-cometd-demo/Stocks
+
+Note: If you see exceptions in the logfile, try running with a later version of jetty (eg use the [run jetty run](http://code.google.com/p/run-jetty-run/) plugin in eclipse.
