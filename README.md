@@ -71,7 +71,7 @@ public class PushDemo {
 }
 ```
 
-Maven
+## Maven
 ```xml
 <dependencies>
 	<dependency>
@@ -103,3 +103,7 @@ Maven
 	</repository>
 </repositories>
 ```
+
+## Demo
+
+The tapestry-cometd-demo can be downloaded [here](https://github.com/uklance/tapestry-cometd-demo)
