@@ -112,6 +112,6 @@ mvn jetty:run
 ```
 After jetty starts, point your browser to 
 * http://localhost:8080/tapestry-cometd-demo/Stocks
-* http://localhost:8080/tapestry-cometd-demo/Stocks
+* http://localhost:8080/tapestry-cometd-demo/Chat
 
 Note: If you see exceptions in the logfile, try running with a later version of jetty (eg use the [run jetty run](http://code.google.com/p/run-jetty-run/) plugin in eclipse.
