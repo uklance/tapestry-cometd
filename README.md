@@ -106,8 +106,7 @@ public class PushDemo {
 
 ## Demo
 
-Download the tapestry-cometd-demo from here [here](https://github.com/uklance/tapestry-cometd-demo)
-Run the following command
+Download the tapestry-cometd-demo from here [here](https://github.com/uklance/tapestry-cometd-demo) and run the following command from the command line.
 ```
 mvn jetty:run
 ```
