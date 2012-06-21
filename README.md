@@ -106,4 +106,9 @@ public class PushDemo {
 
 ## Demo
 
-The tapestry-cometd-demo can be downloaded [here](https://github.com/uklance/tapestry-cometd-demo)
+Download the tapestry-cometd-demo from here [here](https://github.com/uklance/tapestry-cometd-demo)
+Run the following command
+```
+mvn jetty:run
+```
+After jetty starts, point your browser to https://github.com/uklance/tapestry-cometd-demo
