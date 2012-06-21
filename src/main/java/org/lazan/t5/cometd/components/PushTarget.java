@@ -37,16 +37,14 @@ import org.lazan.t5.cometd.services.ChannelIdSource;
 		"classpath:/org/lazan/t5/cometd/ReloadExtension.js",
 		"classpath:/org/lazan/t5/cometd/TimeStampExtension.js",
 		"classpath:/org/lazan/t5/cometd/TimeSyncExtension.js",
-		"classpath:/org/lazan/t5/cometd/push.js",
+		"classpath:/org/lazan/t5/cometd/PushTarget.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-ack.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-reload.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timestamp.js",
 		"classpath:/org/lazan/t5/cometd/jquery/jquery.cometd-timesync.js",
 })
-public class Push extends Any	{
-	public static final String INIT_CHANNEL_ID = "/service/pushInit";
-	
+public class PushTarget extends Any	{
     @Inject
     private ComponentResources resources;
 	
@@ -87,7 +85,6 @@ public class Push extends Any	{
     		
     		JSONObject spec = pushSupport.getSpec();
     		
-    		spec.put("initChannelId", INIT_CHANNEL_ID);
     		spec.put("configureOptions", getConfigureOptions());
     		
     		subSpecs = new JSONArray();
