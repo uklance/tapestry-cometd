@@ -16,6 +16,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ParallelExecutor;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Request;
@@ -32,15 +33,18 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 	private final RequestGlobals requestGlobals;
 	private final String applicationCharset;
 	private final PerthreadManager perthreadManager;
+	private final ApplicationGlobals applicationGlobals;
 
 	public ComponentJsonRendererImpl(ParallelExecutor parallelExecutor, ComponentRequestHandler componentRequestHandler,
-			RequestGlobals requestGlobals, @Symbol(SymbolConstants.CHARSET) String applicationCharset, PerthreadManager perthreadManager) {
+			RequestGlobals requestGlobals, @Symbol(SymbolConstants.CHARSET) String applicationCharset, PerthreadManager perthreadManager,
+			ApplicationGlobals applicationGlobals) {
 		super();
 		this.parallelExecutor = parallelExecutor;
 		this.componentRequestHandler = componentRequestHandler;
 		this.requestGlobals = requestGlobals;
 		this.applicationCharset = applicationCharset;
 		this.perthreadManager = perthreadManager;
+		this.applicationGlobals = applicationGlobals;
 	}
 
 	public JSONObject render(ComponentEventRequestParameters parameters) {
@@ -51,19 +55,21 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 		Future<JSONObject> future = parallelExecutor.invoke(new Invokable<JSONObject>() {
 			public JSONObject invoke() {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				final FakeHttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession);
+				String contextPath = applicationGlobals.getServletContext().getContextPath();
+				final FakeHttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession, contextPath);
 				fakeHttpRequest.setHeader("X-Requested-With", "XMLHttpRequest");
 				HttpServletResponse fakeHttpResponse = new FakeHttpServletResponse(out, applicationCharset);
 				TapestrySessionFactory sessionFactory = new TapestrySessionFactory() {
 					public Session getSession(boolean create) {
 						if (httpSession == null) {
-							throw new IllegalStateException("Session not registered, this is most likely because you have not set session = 'true' in the push mixin");
+							throw new IllegalStateException(
+									"Session not registered, this is most likely because you have not set session = 'true' in the push mixin");
 						}
 						return new SessionImpl(fakeHttpRequest, httpSession);
 					}
 				};
 				Request fakeRequest = new RequestImpl(fakeHttpRequest, applicationCharset, sessionFactory);
-				Response fakeResponse = new ResponseImpl(fakeHttpRequest, fakeHttpResponse);				
+				Response fakeResponse = new ResponseImpl(fakeHttpRequest, fakeHttpResponse);
 
 				try {
 					requestGlobals.storeServletRequestResponse(fakeHttpRequest, fakeHttpResponse);

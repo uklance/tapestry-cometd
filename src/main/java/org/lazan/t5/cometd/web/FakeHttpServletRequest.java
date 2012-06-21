@@ -22,10 +22,12 @@ public class FakeHttpServletRequest implements HttpServletRequest {
 	private String characterEncoding;
 	private Map<String, String> parameters = new HashMap<String, String>();
 	private Map<String, Object> attributes = new HashMap<String, Object>();
+	private String contextPath;
 	
-	public FakeHttpServletRequest(HttpSession session) {
+	public FakeHttpServletRequest(HttpSession session, String contextPath) {
 		super();
 		this.session = session;
+		this.contextPath = contextPath;
 	}
 
 	public Object getAttribute(String arg0) {
