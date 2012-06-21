@@ -18,8 +18,6 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.BayeuxServer.ChannelListener;
 import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.ServerChannel;
-import org.cometd.bayeux.server.ServerChannel.MessageListener;
-import org.cometd.bayeux.server.ServerMessage.Mutable;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
@@ -33,20 +31,15 @@ public class PushManagerImpl implements PushManager {
 	private final ComponentJsonRenderer componentStringRenderer;
 	private final TypeCoercer typeCoercer;
 	private final CometdGlobals cometdGlobals;
-	private final HttpServletRequest request;
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
-	private static final String INIT_CHANNEL = "/service/pushInit";
 
 	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer,
 			TypeCoercer typeCoercer, HttpServletRequest request, CometdGlobals cometdGlobals) {
 		this.bayeuxServer = bayeuxServer;
-		this.bayeuxServer.createIfAbsent(INIT_CHANNEL);
-		this.bayeuxServer.getChannel(INIT_CHANNEL).addListener(new PushInitListener());
 		this.bayeuxServer.addListener(new DisconnectListener());
 		this.logger = logger;
 		this.componentStringRenderer = componentStringRenderer;
 		this.typeCoercer = typeCoercer;
-		this.request = request;
 		this.cometdGlobals = cometdGlobals;
 	}
 
@@ -106,39 +99,6 @@ public class PushManagerImpl implements PushManager {
 		throw new UnsupportedOperationException();
 	}
 
-	private String getRequiredString(Map<String, Object> data, String key) {
-		String value = (String) data.get(key);
-		if (value == null) {
-			throw new IllegalStateException(String.format("Required attribute %s not present", key));
-		}
-		return value;
-	}
-
-	public class PushInitListener implements MessageListener {
-		public boolean onMessage(ServerSession serverSession, ServerChannel channel, Mutable message) {
-			Map<String, Object> data = message.getDataAsMap();
-			boolean session = "true".equals(getRequiredString(data, "session"));
-			String channelId = getRequiredString(data, "channelId");
-			String topic = getRequiredString(data, "topic");
-
-			String activePageName = getRequiredString(data, "activePageName");
-			String containingPageName = getRequiredString(data, "containingPageName");
-			String nestedComponentId = (String) data.get("nestedComponentId");
-			if (nestedComponentId == null) {
-				nestedComponentId = "";
-			}
-			String eventType = getRequiredString(data, "eventType");
-
-			ClientContext clientContext = new ClientContext(session, activePageName, containingPageName, nestedComponentId, eventType);
-			cometdGlobals.setClientContext(topic, channelId, clientContext);
-
-			if (session) {
-				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
-				serverSession.setAttribute("sessionRef", sessionRef);
-			}
-			return true;
-		}
-	}
 
 	public class DisconnectListener implements ChannelListener {
 		public void channelAdded(ServerChannel channel) {

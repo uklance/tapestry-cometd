@@ -8,8 +8,7 @@ Tapestry.Initializer.push = function(spec)
 			var subSpecs = spec.subSpecs;
 			for (var i = 0; i < subSpecs.length; ++i) {
 				var subSpec = subSpecs[i];
-				cometd.publish(spec.initChannelId, subSpec.initData);
-				cometd.subscribe(subSpec.initData.channelId, function(message) {
+				var callback = function(message) {
 					//alert('message: ' + message.data.content);
 					var clientId = subSpec.clientId;
 					if (message.data.content) {
@@ -35,7 +34,8 @@ Tapestry.Initializer.push = function(spec)
 					}
 					//TODO
 					//$.tapestry.utils.loadScriptsInReply(message.data, specs.callback);
-				});
+				};
+				cometd.subscribe(subSpec.initData.channelId, undefined, callback, { data: subSpec.initData });
 			}
 			cometd.endBatch();
 		}
