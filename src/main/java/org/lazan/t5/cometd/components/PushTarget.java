@@ -19,8 +19,8 @@ import org.lazan.t5.cometd.PushSupport;
 import org.lazan.t5.cometd.internal.PushSupportImpl;
 import org.lazan.t5.cometd.services.ChannelIdSource;
 
-/*
- */
+// TODO: Investigate using a stack for this
+// TODO: work out if all of these js files are actually required
 @Import(library={
 		"classpath:/org/lazan/t5/cometd/cometd-namespace.js",
 		"classpath:/org/lazan/t5/cometd/cometd-header.js",
@@ -69,13 +69,14 @@ public class PushTarget extends Any	{
 	@Inject
 	private ChannelIdSource channelIdSource;
 	
+	// TODO: use an enum for this
 	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:UPDATE")
 	private String update;
 	
 	@Inject
 	private Environment environment;
 	
-    @BeginRender
+	@BeginRender
 	void beginRender() {
 		PushSupport pushSupport = environment.peek(PushSupport.class);
     	JSONArray subSpecs;
@@ -112,16 +113,17 @@ public class PushTarget extends Any	{
     protected JSONObject getInitData() {
     	String channelId = channelIdSource.getChannelId(resources, getClientId());
     	return new JSONObject(
-			"activePageName", resources.getPageName(), // PushDemo
-			"containingPageName", resources.getPageName(), // PushDemo
-			"nestedComponentId", resources.getNestedId(), // ""
-			"eventType", event, // "chat"
+			"activePageName", resources.getPageName(),
+			"containingPageName", resources.getPageName(),
+			"nestedComponentId", resources.getNestedId(),
+			"eventType", event,
 			"session", String.valueOf(session),
 			"channelId", channelId,
 			"topic", topic
     	);
     }
     
+    // TODO: https://github.com/uklance/tapestry-cometd/issues/12
     protected JSONObject getConfigureOptions() {
     	JSONObject json = new JSONObject();
     	String url = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
