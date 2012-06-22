@@ -114,7 +114,10 @@ After jetty starts, point your browser to
 * [http://localhost:8080/tapestry-cometd-demo/Stocks](http://localhost:8080/tapestry-cometd-demo/Stocks)
 * [http://localhost:8080/tapestry-cometd-demo/Chat](http://localhost:8080/tapestry-cometd-demo/Chat)
 
-Note: You will see exceptions being logged if you run through maven due to an old version of jetty. You can use the [run jetty run](http://code.google.com/p/run-jetty-run/) eclipse plugin to quickly run a newer version of jetty.
+Note: You will see exceptions being logged if you run through maven due to an old version of jetty.
+You can use the [run jetty run](http://code.google.com/p/run-jetty-run/) eclipse plugin to quickly run a
+newer version of jetty. There is an [issue](https://github.com/uklance/tapestry-cometd/issues/28) to 
+support older servlet containers.
 
 ## Links
 * [FAQ](https://github.com/uklance/tapestry-cometd/wiki/FAQ)
