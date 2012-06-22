@@ -25,6 +25,7 @@ public class CometdGlobalsImpl implements CometdGlobals {
 	public void setClientContext(String topic, String channelId, ClientContext clientContext) {
 		Set<String> channelIds = channelIdsByTopic.get(topic);
 		if (channelIds == null) {
+			// TODO: Collections.newSetFromMap() is a java 1.6 feature. Do I care?
 			Set<String> tempChannelIds = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 			channelIds = channelIdsByTopic.putIfAbsent(topic, tempChannelIds);
 			if (channelIds == null) {
