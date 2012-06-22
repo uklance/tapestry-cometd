@@ -12,7 +12,7 @@ tapestry-cometd
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * Topic abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
-* Custom authorization ([TODO](https://github.com/uklance/tapestry-cometd/issues/21))
+* Custom authorization
 * Custom message listeners ([TODO](https://github.com/uklance/tapestry-cometd/issues/21))
 
 ## Usage:
@@ -30,7 +30,7 @@ Page.tml
 		</form>
 	</t:zone>
 
-	<!-- this component subscribes to the 'chatTopic' topic and appends received messages to itself -->
+	<!-- this PushTarget subscribes to the 'chatTopic' topic and appends received messages to itself -->
 	<t:cometd.PushTarget topic="chatTopic" event="chat" update="APPEND" />
 
 	<!-- this template is applied to each chat message when it is received -->
@@ -111,8 +111,8 @@ Download the tapestry-cometd-demo from [here](https://github.com/uklance/tapestr
 mvn jetty:run
 ```
 After jetty starts, point your browser to 
-* http://localhost:8080/tapestry-cometd-demo/Stocks
-* http://localhost:8080/tapestry-cometd-demo/Chat
+* [http://localhost:8080/tapestry-cometd-demo/Stocks](http://localhost:8080/tapestry-cometd-demo/Stocks)
+* [http://localhost:8080/tapestry-cometd-demo/Chat](http://localhost:8080/tapestry-cometd-demo/Chat)
 
 Note: You will see exceptions being logged if you run through maven due to an old version of jetty. You can use the [run jetty run](http://code.google.com/p/run-jetty-run/) eclipse plugin to quickly run a newer version of jetty.
 
