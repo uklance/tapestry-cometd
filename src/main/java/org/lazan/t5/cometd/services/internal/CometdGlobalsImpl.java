@@ -12,6 +12,7 @@ public class CometdGlobalsImpl implements CometdGlobals {
 	private final ConcurrentMap<String, Set<String>> channelIdsByTopic = new ConcurrentHashMap<String, Set<String>>();
 	private final ConcurrentMap<String, ClientContext> clientContextByChannelId = new ConcurrentHashMap<String, ClientContext>();
 	
+	// TODO: synchronize nicely
 	public void removeChannel(String channelId) {
 		clientContextByChannelId.remove(channelId);
 		// TODO: map lookup
@@ -20,6 +21,7 @@ public class CometdGlobalsImpl implements CometdGlobals {
 		}
 	}
 	
+	// TODO: synchronize nicely
 	public void setClientContext(String topic, String channelId, ClientContext clientContext) {
 		Set<String> channelIds = channelIdsByTopic.get(topic);
 		if (channelIds == null) {
