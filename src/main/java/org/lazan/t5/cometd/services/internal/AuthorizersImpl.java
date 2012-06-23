@@ -1,11 +1,9 @@
 package org.lazan.t5.cometd.services.internal;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,35 +13,33 @@ import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.ClientContext;
+import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
 
 @UsesOrderedConfiguration(Authorizer.class)
 public class AuthorizersImpl implements Authorizers {
-	private final ConcurrentMap<String, List<Authorizer>> authorizersByTopic;
+	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
 	private final HttpServletRequest request;
 	
 	public AuthorizersImpl(List<Authorizer> authorizers, CometdGlobals cometdGlobals, HttpServletRequest request) {
 		super();
-		this.authorizersByTopic = createMultiMap(authorizers);
+		this.authorizers = creatTopicMatchers(authorizers);
 		this.cometdGlobals = cometdGlobals;
 		this.request = request;
 	}
 
-	private ConcurrentMap<String, List<Authorizer>> createMultiMap(List<Authorizer> list) {
-		ConcurrentMap<String, List<Authorizer>> multimap = new ConcurrentHashMap<String, List<Authorizer>>();
+
+	private TopicMatchers<Authorizer> creatTopicMatchers(List<Authorizer> list) {
+		TopicMatchers<Authorizer> matchers = new TopicMatchers<Authorizer>();
 		for (Authorizer auth : list) {
-			List<Authorizer> value = multimap.get(auth.getTopic());
-			if (value == null) {
-				value = new CopyOnWriteArrayList<Authorizer>();
-				multimap.put(auth.getTopic(), value);
-			}
-			value.add(auth);
+			matchers.add(auth.getTopicPattern(), auth);
 		}
-		return multimap;
+		return matchers;
 	}
+
 
 	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {
 		if (operation == Operation.SUBSCRIBE) {
@@ -54,15 +50,13 @@ public class AuthorizersImpl implements Authorizers {
 			String topic = getRequiredString(data, "topic");
 			ClientContext clientContext = getClientContext(data);
 			
-			List<Authorizer> auths = authorizersByTopic.get(topic);
-			if (auths != null) {
-				for (Authorizer auth : auths) {
-					if (!auth.isAuthorized(clientContext)) {
-						return Result.deny("Authorization failure");
-					}
+			Iterator<Authorizer> auths = authorizers.getMatches(topic);
+			while (auths.hasNext()) {
+				Authorizer auth = auths.next();
+				if (!auth.isAuthorized(topic, clientContext)) {
+					return Result.deny("Authorization failure");
 				}
 			}
-	
 			if (clientContext.isSession()) {
 				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
 				serverSession.setAttribute("sessionRef", sessionRef);
