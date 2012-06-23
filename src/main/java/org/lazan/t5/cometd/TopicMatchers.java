@@ -1,7 +1,6 @@
 package org.lazan.t5.cometd;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +14,7 @@ public class TopicMatchers<T> {
 	 * @param topic A subscription topic (eg "/chat/cars")
 	 * @return
 	 */
-	public Iterator<T> getMatches(String topic) {
+	public List<T> getMatches(String topic) {
 		if (topic.startsWith("/")) {
 			topic = topic.substring(1);
 		}
@@ -42,7 +41,7 @@ public class TopicMatchers<T> {
 				node = node.nodesByLevel == null ? null : node.nodesByLevel.get(level);
 			}
 		}
-		return matches.iterator();
+		return matches;
 	}
 	
 	/**

@@ -1,14 +1,14 @@
 package org.lazan.t5.cometd.services.internal;
 
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
@@ -17,22 +17,25 @@ import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
+import org.lazan.t5.cometd.services.SubscriptionListeners;
 
-@UsesOrderedConfiguration(Authorizer.class)
+@UsesConfiguration(Authorizer.class)
 public class AuthorizersImpl implements Authorizers {
 	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
 	private final HttpServletRequest request;
+	private final SubscriptionListeners subscriptionListeners;
 	
-	public AuthorizersImpl(List<Authorizer> authorizers, CometdGlobals cometdGlobals, HttpServletRequest request) {
+	public AuthorizersImpl(Collection<Authorizer> authorizerList, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals,
+			HttpServletRequest request) {
 		super();
-		this.authorizers = creatTopicMatchers(authorizers);
+		this.authorizers = creatTopicMatchers(authorizerList);
+		this.subscriptionListeners = subscriptionListeners;
 		this.cometdGlobals = cometdGlobals;
 		this.request = request;
 	}
 
-
-	private TopicMatchers<Authorizer> creatTopicMatchers(List<Authorizer> list) {
+	private TopicMatchers<Authorizer> creatTopicMatchers(Collection<Authorizer> list) {
 		TopicMatchers<Authorizer> matchers = new TopicMatchers<Authorizer>();
 		for (Authorizer auth : list) {
 			matchers.add(auth.getTopicPattern(), auth);
@@ -48,11 +51,10 @@ public class AuthorizersImpl implements Authorizers {
 			
 			String channelId = getRequiredString(data, "channelId");
 			String topic = getRequiredString(data, "topic");
-			ClientContext clientContext = getClientContext(data);
+			ClientContext clientContext = ClientContext.fromMessage(message);
 			
-			Iterator<Authorizer> auths = authorizers.getMatches(topic);
-			while (auths.hasNext()) {
-				Authorizer auth = auths.next();
+			List<Authorizer> auths = authorizers.getMatches(topic);
+			for (Authorizer auth : auths) {
 				if (!auth.isAuthorized(topic, clientContext)) {
 					return Result.deny("Authorization failure");
 				}
@@ -66,20 +68,6 @@ public class AuthorizersImpl implements Authorizers {
 		return Result.grant();
 	}
 	
-	protected ClientContext getClientContext(Map<String, Object> data) {
-
-		String activePageName = getRequiredString(data, "activePageName");
-		String containingPageName = getRequiredString(data, "containingPageName");
-		String nestedComponentId = (String) data.get("nestedComponentId");
-		if (nestedComponentId == null) {
-			nestedComponentId = "";
-		}
-		String eventType = getRequiredString(data, "eventType");
-		boolean session = "true".equals(getRequiredString(data, "session"));
-
-		return new ClientContext(session, activePageName, containingPageName, nestedComponentId, eventType);
-	}
-
 	private String getRequiredString(Map<String, Object> data, String key) {
 		String value = (String) data.get(key);
 		if (value == null) {
