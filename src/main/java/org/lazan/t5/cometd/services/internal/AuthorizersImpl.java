@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
@@ -17,17 +17,20 @@ import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
+import org.lazan.t5.cometd.services.SubscriptionListeners;
 
-@UsesOrderedConfiguration(Authorizer.class)
+@UsesConfiguration(Authorizer.class)
 public class AuthorizersImpl implements Authorizers {
 	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
 	private final HttpServletRequest request;
-
-	public AuthorizersImpl(List<Authorizer> authorizerList, CometdGlobals cometdGlobals,
+	private final SubscriptionListeners subscriptionListeners;
+	
+	public AuthorizersImpl(Collection<Authorizer> authorizerList, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals,
 			HttpServletRequest request) {
 		super();
 		this.authorizers = creatTopicMatchers(authorizerList);
+		this.subscriptionListeners = subscriptionListeners;
 		this.cometdGlobals = cometdGlobals;
 		this.request = request;
 	}
@@ -40,16 +43,16 @@ public class AuthorizersImpl implements Authorizers {
 		return matchers;
 	}
 
-	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession,
-			ServerMessage message) {
+
+	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {
 		if (operation == Operation.SUBSCRIBE) {
 			Map<String, Object> data = message.getDataAsMap();
 			System.err.println(String.format("%s %s %s", operation, channel, data));
-
+			
 			String channelId = getRequiredString(data, "channelId");
 			String topic = getRequiredString(data, "topic");
 			ClientContext clientContext = ClientContext.fromMessage(message);
-
+			
 			List<Authorizer> auths = authorizers.getMatches(topic);
 			for (Authorizer auth : auths) {
 				if (!auth.isAuthorized(topic, clientContext)) {
@@ -57,15 +60,14 @@ public class AuthorizersImpl implements Authorizers {
 				}
 			}
 			if (clientContext.isSession()) {
-				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(
-						request.getSession());
+				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
 				serverSession.setAttribute("sessionRef", sessionRef);
 			}
 			cometdGlobals.setClientContext(topic, channelId, clientContext);
 		}
 		return Result.grant();
 	}
-
+	
 	private String getRequiredString(Map<String, Object> data, String key) {
 		String value = (String) data.get(key);
 		if (value == null) {
@@ -73,5 +75,6 @@ public class AuthorizersImpl implements Authorizers {
 		}
 		return value;
 	}
+	
 
 }
