@@ -1,8 +1,6 @@
 package org.lazan.t5.cometd.services;
 
-import org.lazan.t5.cometd.ClientContext;
+import org.cometd.bayeux.server.BayeuxServer.SubscriptionListener;
 
-public interface SubscriptionListeners {
-	public void onSubscribe(String topic, ClientContext context);
-	public void onUnsubscribe(String topic, ClientContext context);
+public interface SubscriptionListeners extends SubscriptionListener {
 }
