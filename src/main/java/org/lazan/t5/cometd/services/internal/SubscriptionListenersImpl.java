@@ -1,18 +1,18 @@
 package org.lazan.t5.cometd.services.internal;
 
-import java.util.List;
+import java.util.Collection;
 
-import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.lazan.t5.cometd.ClientContext;
 import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.SubscriptionListener;
 import org.lazan.t5.cometd.services.SubscriptionListeners;
 
-@UsesOrderedConfiguration(SubscriptionListener.class)
+@UsesConfiguration(SubscriptionListener.class)
 public class SubscriptionListenersImpl implements SubscriptionListeners {
 	private final TopicMatchers<SubscriptionListener> listeners;
 	
-	public SubscriptionListenersImpl(List<SubscriptionListener> list) {
+	public SubscriptionListenersImpl(Collection<SubscriptionListener> list) {
 		listeners = new TopicMatchers<SubscriptionListener>();
 		for (SubscriptionListener listener : list) {
 			listeners.add(listener.getTopicPattern(), listener);
