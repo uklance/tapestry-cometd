@@ -36,6 +36,7 @@ public class PushManagerImpl implements PushManager {
 	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer,
 			TypeCoercer typeCoercer, HttpServletRequest request, CometdGlobals cometdGlobals) {
 		this.bayeuxServer = bayeuxServer;
+		this.bayeuxServer.addListener(new DisconnectListener());
 		this.logger = logger;
 		this.componentStringRenderer = componentStringRenderer;
 		this.typeCoercer = typeCoercer;
@@ -96,5 +97,23 @@ public class PushManagerImpl implements PushManager {
 
 	public void service(final String clientId, Object... context) {
 		throw new UnsupportedOperationException();
+	}
+
+
+	public class DisconnectListener implements ChannelListener {
+		public void channelAdded(ServerChannel channel) {
+		}
+
+		/**
+		 * Cleans up maps to avoid memory leaks TODO: There are race conditions
+		 * which could cause this to result in an invalid state
+		 */
+		public void channelRemoved(String channelId) {
+			logger.info("Cleaning up channel {}", channelId);
+			cometdGlobals.removeChannel(channelId);
+		}
+
+		public void configureChannel(ConfigurableServerChannel channel) {
+		}
 	}
 }

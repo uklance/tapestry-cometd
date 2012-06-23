@@ -3,6 +3,7 @@ package org.lazan.t5.cometd;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -37,7 +38,8 @@ public class TopicMatchersTest {
 	}
 
 	private void assertMatches(String[] expecteds, List<String> matches) {
-		Assert.assertEquals(new HashSet<String>(Arrays.asList(expecteds)), new HashSet<String>(matches));
+		Set<String> actuals = new HashSet<String>(matches);
+		Assert.assertEquals(new HashSet<String>(Arrays.asList(expecteds)), actuals);
 	}
 
 }
