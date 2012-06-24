@@ -30,7 +30,6 @@ public class AuthorizersImpl implements Authorizers {
 		this.request = request;
 	}
 
-
 	private TopicMatchers<Authorizer> creatTopicMatchers(List<Authorizer> list) {
 		TopicMatchers<Authorizer> matchers = new TopicMatchers<Authorizer>();
 		for (Authorizer auth : list) {
@@ -39,12 +38,10 @@ public class AuthorizersImpl implements Authorizers {
 		return matchers;
 	}
 
-
 	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {
 		if (operation == Operation.SUBSCRIBE) {
 			Map<String, Object> data = message.getDataAsMap();
-			System.err.println(String.format("%s %s %s", operation, channel, data));
-			
+
 			String channelId = getRequiredString(data, "channelId");
 			ClientContext clientContext = cometdGlobals.getClientContext(channelId);
 			boolean firstClient = false;
@@ -92,6 +89,4 @@ public class AuthorizersImpl implements Authorizers {
 		}
 		return value;
 	}
-	
-
 }
