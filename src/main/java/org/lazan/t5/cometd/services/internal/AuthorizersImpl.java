@@ -34,7 +34,7 @@ public class AuthorizersImpl implements Authorizers {
 	private TopicMatchers<Authorizer> creatTopicMatchers(List<Authorizer> list) {
 		TopicMatchers<Authorizer> matchers = new TopicMatchers<Authorizer>();
 		for (Authorizer auth : list) {
-			matchers.add(auth.getTopicPattern(), auth);
+			matchers.addMatcher(auth.getTopicPattern(), auth);
 		}
 		return matchers;
 	}

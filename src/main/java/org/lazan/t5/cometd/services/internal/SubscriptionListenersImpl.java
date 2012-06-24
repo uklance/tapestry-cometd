@@ -19,7 +19,7 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 	public SubscriptionListenersImpl(List<SubscriptionListener> list, CometdGlobals cometdGlobals) {
 		listeners = new TopicMatchers<SubscriptionListener>();
 		for (SubscriptionListener listener : list) {
-			listeners.add(listener.getTopicPattern(), listener);
+			listeners.addMatcher(listener.getTopicPattern(), listener);
 		}
 		this.cometdGlobals = cometdGlobals;
 	}
