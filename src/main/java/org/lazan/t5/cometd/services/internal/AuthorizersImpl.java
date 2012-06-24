@@ -46,8 +46,12 @@ public class AuthorizersImpl implements Authorizers {
 			System.err.println(String.format("%s %s %s", operation, channel, data));
 			
 			String channelId = getRequiredString(data, "channelId");
-			
-			ClientContext clientContext = getClientContext(data);
+			ClientContext clientContext = cometdGlobals.getClientContext(channelId);
+			boolean firstClient = false;
+			if (clientContext == null) {
+				firstClient = true;
+				clientContext = getClientContext(data);
+			}
 			String topic = clientContext.getTopic();
 			for (Authorizer auth : authorizers.getMatches(topic)) {
 				if (!auth.isAuthorized(topic, clientContext)) {
@@ -58,7 +62,10 @@ public class AuthorizersImpl implements Authorizers {
 				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
 				serverSession.setAttribute("sessionRef", sessionRef);
 			}
-			cometdGlobals.setClientContext(topic, channelId, clientContext);
+			if (firstClient) {
+				// synchronization not required here, if it gets set twice that's fine
+				cometdGlobals.setClientContext(clientContext.getTopic(), channelId, clientContext);
+			}
 		}
 		return Result.grant();
 	}
