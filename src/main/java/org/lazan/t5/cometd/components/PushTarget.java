@@ -9,13 +9,13 @@ import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Any;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.lazan.t5.cometd.PushSupport;
+import org.lazan.t5.cometd.UpdateStrategy;
 import org.lazan.t5.cometd.internal.PushSupportImpl;
 import org.lazan.t5.cometd.services.ChannelIdSource;
 
@@ -70,41 +70,37 @@ public class PushTarget extends Any	{
 	private ChannelIdSource channelIdSource;
 	
 	// TODO: use an enum for this
-	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:UPDATE")
-	private String update;
+	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:replace")
+	private UpdateStrategy update;
 	
 	@Inject
 	private Environment environment;
 	
 	@BeginRender
 	void beginRender() {
+		// append config to a single PushSupport instance for all PushTargets
 		PushSupport pushSupport = environment.peek(PushSupport.class);
-    	JSONArray subSpecs;
 		if (pushSupport == null) {
     		pushSupport = new PushSupportImpl();
     		environment.push(PushSupport.class, pushSupport);
     		
     		JSONObject spec = pushSupport.getSpec();
-    		
     		spec.put("configureOptions", getConfigureOptions());
-    		
-    		subSpecs = new JSONArray();
-    		spec.put("subSpecs", subSpecs);
-    	} else {
-    		subSpecs = pushSupport.getSpec().getJSONArray("subSpecs");
     	}
 
     	JSONObject subSpec = new JSONObject();
 		subSpec.put("clientId",  getClientId());
 		subSpec.put("initData", getInitData());
-		subSpec.put("update", update);
-    	subSpecs.put(subSpec);
+		subSpec.put("update", update.name());
+    	pushSupport.getSpec().append("subSpecs", subSpec);
 	}
     
     @AfterRender
     void afterRender() {
     	PushSupport pushSupport = environment.peek(PushSupport.class);
     	if (pushSupport != null) {
+    		// if there are multiple push targets on the page, only a single javascript
+    		// initialization is done
     		jss.addInitializerCall("push", pushSupport.getSpec());
     		environment.pop(PushSupport.class);
     	}

@@ -12,9 +12,9 @@ Tapestry.Initializer.push = function(spec)
 					//alert('message: ' + message.data.content);
 					var clientId = subSpec.clientId;
 					if (message.data.content) {
-						if (subSpec.update == 'APPEND') {
+						if (subSpec.update == 'append') {
 							$('#' + clientId).append(message.data.content);
-						} else if (subSpec.update == 'PREPEND') {
+						} else if (subSpec.update == 'prepend') {
 							$('#' + clientId).prepend(message.data.content);
 						} else {
 							$('#' + clientId).html(message.data.content);
