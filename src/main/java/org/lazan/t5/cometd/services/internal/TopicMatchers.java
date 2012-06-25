@@ -1,8 +1,7 @@
-package org.lazan.t5.cometd;
+package org.lazan.t5.cometd.services.internal;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -62,28 +61,25 @@ public class TopicMatchers<T> {
 	 * @param pattern A topic pattern (eg "/chat/cars", "/chat/*", "/**")
 	 * @param matcher
 	 */
-	public synchronized void addMatcher(String pattern, T matcher) {
+	public void addMatcher(String pattern, T matcher) {
 		Set<T> set = matchersByPattern.get(pattern);
 		if (set == null) {
-			Set<T> temp = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
-			set = matchersByPattern.putIfAbsent(pattern, temp);
+			Set<T> candidate = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
+			set = matchersByPattern.putIfAbsent(pattern, candidate);
 			if (set == null) {
-				set = temp;
+				set = candidate;
 			}
 		}
 		set.add(matcher);
 	}
 	
-	public synchronized boolean removeMatcher(T matcher) {
+	public boolean removeMatcher(String pattern, T matcher) {
+		Set<T> set = matchersByPattern.get(pattern);
 		boolean removed = false;
-		for (Iterator<Set<T>> it = matchersByPattern.values().iterator(); it.hasNext(); ) {
-			Set<T> set = it.next();
-			if (set.remove(matcher)) {
-				removed = true;
-				if (set.isEmpty()) {
-					// TODO: use ConcurrentMap.remove(Object key, Object value) and get rid of synchronized
-					it.remove();
-				}
+		if (set != null) {
+			removed = set.remove(matcher);
+			if (set.isEmpty()) {
+				matchersByPattern.remove(pattern, set);
 			}
 		}
 		return removed;

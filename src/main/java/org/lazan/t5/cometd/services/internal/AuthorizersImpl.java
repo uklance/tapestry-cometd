@@ -12,7 +12,6 @@ import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.ClientContext;
-import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
@@ -25,17 +24,20 @@ public class AuthorizersImpl implements Authorizers {
 	
 	public AuthorizersImpl(List<Authorizer> authorizers, CometdGlobals cometdGlobals, HttpServletRequest request) {
 		super();
-		this.authorizers = creatTopicMatchers(authorizers);
+		this.authorizers = new TopicMatchers<Authorizer>();
+		for (Authorizer auth : authorizers) {
+			addAuthorizer(auth);
+		}
 		this.cometdGlobals = cometdGlobals;
 		this.request = request;
 	}
-
-	private TopicMatchers<Authorizer> creatTopicMatchers(List<Authorizer> list) {
-		TopicMatchers<Authorizer> matchers = new TopicMatchers<Authorizer>();
-		for (Authorizer auth : list) {
-			matchers.addMatcher(auth.getTopicPattern(), auth);
-		}
-		return matchers;
+	
+	public void addAuthorizer(Authorizer auth) {
+		authorizers.addMatcher(auth.getTopicPattern(), auth);
+	}
+	
+	public boolean removeAuthorizer(Authorizer auth) {
+		return authorizers.removeMatcher(auth.getTopicPattern(), auth);
 	}
 
 	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {
@@ -51,7 +53,7 @@ public class AuthorizersImpl implements Authorizers {
 			}
 			String topic = clientContext.getTopic();
 			for (Authorizer auth : authorizers.getMatches(topic)) {
-				if (!auth.isAuthorized(topic, clientContext)) {
+				if (!auth.isAuthorized(clientContext)) {
 					return Result.deny("Authorization failure");
 				}
 			}

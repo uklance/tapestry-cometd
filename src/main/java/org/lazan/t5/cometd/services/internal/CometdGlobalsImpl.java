@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.lazan.t5.cometd.ClientContext;
-import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.CometdGlobals;
 
 public class CometdGlobalsImpl implements CometdGlobals {
@@ -14,8 +13,10 @@ public class CometdGlobalsImpl implements CometdGlobals {
 	
 	// TODO: synchronize nicely
 	public void removeChannel(String channelId) {
-		clientContextByChannelId.remove(channelId);
-		channelIdsByTopic.removeMatcher(channelId);
+		ClientContext clientContext = clientContextByChannelId.remove(channelId);
+		if (clientContext != null) {
+			channelIdsByTopic.removeMatcher(clientContext.getTopic(), channelId);
+		}
 	}
 	
 	// TODO: synchronize nicely

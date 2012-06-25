@@ -6,7 +6,6 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.ClientContext;
-import org.lazan.t5.cometd.TopicMatchers;
 import org.lazan.t5.cometd.services.CometdGlobals;
 import org.lazan.t5.cometd.services.SubscriptionListener;
 import org.lazan.t5.cometd.services.SubscriptionListeners;
@@ -19,9 +18,17 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 	public SubscriptionListenersImpl(List<SubscriptionListener> list, CometdGlobals cometdGlobals) {
 		listeners = new TopicMatchers<SubscriptionListener>();
 		for (SubscriptionListener listener : list) {
-			listeners.addMatcher(listener.getTopicPattern(), listener);
+			addListener(listener);
 		}
 		this.cometdGlobals = cometdGlobals;
+	}
+	
+	public void addListener(SubscriptionListener listener) {
+		listeners.addMatcher(listener.getTopicPattern(), listener);
+	}
+	
+	public boolean removeListener(SubscriptionListener listener) {
+		return listeners.removeMatcher(listener.getTopicPattern(), listener);
 	}
 	
 	public void subscribed(ServerSession session, ServerChannel channel) {
@@ -29,7 +36,7 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 		if (clientContext != null) {
 			String topic = clientContext.getTopic();
 			for (SubscriptionListener listener : listeners.getMatches(topic)) {
-				listener.onSubscribe(topic, clientContext);
+				listener.onSubscribe(clientContext);
 			}
 		}
 	}
@@ -39,7 +46,7 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 		if (clientContext != null) {
 			String topic = clientContext.getTopic();
 			for (SubscriptionListener listener : listeners.getMatches(topic)) {
-				listener.onUnsubscribe(topic, clientContext);
+				listener.onUnsubscribe(clientContext);
 			}
 		}
 	}

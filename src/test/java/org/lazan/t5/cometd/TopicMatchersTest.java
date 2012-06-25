@@ -7,6 +7,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.lazan.t5.cometd.services.internal.TopicMatchers;
 
 public class TopicMatchersTest {
 

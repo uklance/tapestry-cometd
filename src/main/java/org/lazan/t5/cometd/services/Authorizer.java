@@ -11,5 +11,5 @@ public interface Authorizer {
 	 */
 	String getTopicPattern();
 	
-	boolean isAuthorized(String topic, ClientContext clientContext);
+	boolean isAuthorized(ClientContext clientContext);
 }
