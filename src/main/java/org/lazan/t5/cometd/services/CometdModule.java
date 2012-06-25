@@ -8,6 +8,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerChannel;
 import org.lazan.t5.cometd.services.internal.AuthorizersImpl;
 import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
 import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
@@ -62,8 +63,9 @@ public class CometdModule {
 			Authorizers authorizers, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals) {
 		BayeuxServer bayeuxServer = cometdHttpServletRequestFilter.getBayeuxServer();
 		bayeuxServer.createIfAbsent("/push-target/**");
-		bayeuxServer.getChannel("/push-target/**").addAuthorizer(authorizers);
-		bayeuxServer.addListener(subscriptionListeners);
+		ServerChannel channel = bayeuxServer.getChannel("/push-target/**");
+		channel.addAuthorizer(authorizers);
+		channel.addListener(subscriptionListeners);
 		return bayeuxServer;
 	}
 }
