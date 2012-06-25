@@ -10,7 +10,7 @@ public interface CometdGlobals {
 
 	ClientContext getClientContext(String channelId);
 
-	void setClientContext(String topic, String channelId, ClientContext clientContext);
+	void setClientContext(String channelId, ClientContext clientContext);
 
 	void removeChannel(String channelId);
 

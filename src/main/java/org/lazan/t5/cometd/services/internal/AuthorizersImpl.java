@@ -62,8 +62,7 @@ public class AuthorizersImpl implements Authorizers {
 				serverSession.setAttribute("sessionRef", sessionRef);
 			}
 			if (firstClient) {
-				// synchronization not required here, if it gets set twice that's fine
-				cometdGlobals.setClientContext(clientContext.getTopic(), channelId, clientContext);
+				cometdGlobals.setClientContext(channelId, clientContext);
 			}
 		}
 		return Result.grant();
