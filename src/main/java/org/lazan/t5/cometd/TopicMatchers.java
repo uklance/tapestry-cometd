@@ -81,6 +81,7 @@ public class TopicMatchers<T> {
 			if (set.remove(matcher)) {
 				removed = true;
 				if (set.isEmpty()) {
+					// TODO: use ConcurrentMap.remove(Object key, Object value) and get rid of synchronized
 					it.remove();
 				}
 			}
