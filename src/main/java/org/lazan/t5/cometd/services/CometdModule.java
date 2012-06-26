@@ -65,7 +65,7 @@ public class CometdModule {
 		bayeuxServer.createIfAbsent("/push-target/**");
 		ServerChannel channel = bayeuxServer.getChannel("/push-target/**");
 		channel.addAuthorizer(authorizers);
-		channel.addListener(subscriptionListeners);
+		bayeuxServer.addListener(subscriptionListeners);
 		return bayeuxServer;
 	}
 }

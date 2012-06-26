@@ -65,8 +65,6 @@ public class PushManagerImpl implements PushManager {
 					}
 				}
 			}
-		} else {
-			logger.info("No channels for {}", topic);
 		}
 	}
 
@@ -109,7 +107,6 @@ public class PushManagerImpl implements PushManager {
 		 * which could cause this to result in an invalid state
 		 */
 		public void channelRemoved(String channelId) {
-			logger.info("Cleaning up channel {}", channelId);
 			cometdGlobals.removeChannel(channelId);
 		}
 
