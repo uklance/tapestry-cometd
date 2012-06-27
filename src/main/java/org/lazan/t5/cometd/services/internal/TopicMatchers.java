@@ -14,6 +14,7 @@ public class TopicMatchers<T> {
 	 * @return
 	 */
 	public Set<T> getMatches(String topic) {
+		validateTopic(topic);
 		Set<T> matches = new HashSet<T>();
 		addMatches(matches, topic);
 		
@@ -21,14 +22,7 @@ public class TopicMatchers<T> {
 		String subtopic = topic;
 		while (subtopic != null) {
 			int index = subtopic.lastIndexOf('/');
-			if (index < 0) {
-				if (isFirst) {
-					addMatches(matches, "*");
-					isFirst = false;
-				}
-				addMatches(matches, "**");
-				subtopic = null;
-			} else if (index == 0) {
+			if (index == 0) {
 				if (isFirst) {
 					addMatches(matches, "/*");
 					isFirst = false;
@@ -58,14 +52,15 @@ public class TopicMatchers<T> {
 	 * Add a matcher using a topic pattern which may contain wildcards.
 	 * "*" matches a single level
 	 * "**" matches all sublevels 
-	 * @param pattern A topic pattern (eg "/chat/cars", "/chat/*", "/**")
+	 * @param topic A topic pattern (eg "/chat/cars", "/chat/*", "/**")
 	 * @param matcher
 	 */
-	public void addMatcher(String pattern, T matcher) {
-		Set<T> set = matchersByPattern.get(pattern);
+	public void addMatcher(String topic, T matcher) {
+		validateTopic(topic);
+		Set<T> set = matchersByPattern.get(topic);
 		if (set == null) {
 			Set<T> candidate = Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
-			set = matchersByPattern.putIfAbsent(pattern, candidate);
+			set = matchersByPattern.putIfAbsent(topic, candidate);
 			if (set == null) {
 				set = candidate;
 			}
@@ -73,15 +68,25 @@ public class TopicMatchers<T> {
 		set.add(matcher);
 	}
 	
-	public boolean removeMatcher(String pattern, T matcher) {
-		Set<T> set = matchersByPattern.get(pattern);
+	public boolean removeMatcher(String topic, T matcher) {
+		validateTopic(topic);
+		Set<T> set = matchersByPattern.get(topic);
 		boolean removed = false;
 		if (set != null) {
 			removed = set.remove(matcher);
-			if (set.isEmpty()) {
-				matchersByPattern.remove(pattern, set);
+			if (removed && set.isEmpty()) {
+				matchersByPattern.remove(topic, set);
 			}
 		}
 		return removed;
+	}
+
+	protected void validateTopic(String topic) {
+		if (topic.indexOf('/') != 0) {
+			throw new IllegalArgumentException("Topic must start with '/'");
+		}
+		if (topic.endsWith("/")) {
+			throw new IllegalArgumentException("Topic must not end with '/'");
+		}
 	}
 }
