@@ -24,11 +24,11 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 	}
 	
 	public void addListener(SubscriptionListener listener) {
-		listeners.addMatcher(listener.getTopicPattern(), listener);
+		listeners.addMatcher(listener.getTopic(), listener);
 	}
 	
 	public boolean removeListener(SubscriptionListener listener) {
-		return listeners.removeMatcher(listener.getTopicPattern(), listener);
+		return listeners.removeMatcher(listener.getTopic(), listener);
 	}
 	
 	public void subscribed(ServerSession session, ServerChannel channel) {

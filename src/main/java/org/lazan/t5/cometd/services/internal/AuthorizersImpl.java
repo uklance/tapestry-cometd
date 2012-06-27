@@ -33,11 +33,11 @@ public class AuthorizersImpl implements Authorizers {
 	}
 	
 	public void addAuthorizer(Authorizer auth) {
-		authorizers.addMatcher(auth.getTopicPattern(), auth);
+		authorizers.addMatcher(auth.getTopic(), auth);
 	}
 	
 	public boolean removeAuthorizer(Authorizer auth) {
-		return authorizers.removeMatcher(auth.getTopicPattern(), auth);
+		return authorizers.removeMatcher(auth.getTopic(), auth);
 	}
 
 	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {
