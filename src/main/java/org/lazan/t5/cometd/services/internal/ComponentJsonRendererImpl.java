@@ -14,7 +14,6 @@ import org.apache.tapestry5.internal.services.TapestrySessionFactory;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ParallelExecutor;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
@@ -32,18 +31,17 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 	private final ComponentRequestHandler componentRequestHandler;
 	private final RequestGlobals requestGlobals;
 	private final String applicationCharset;
-	private final PerthreadManager perthreadManager;
 	private final ApplicationGlobals applicationGlobals;
 
-	public ComponentJsonRendererImpl(ParallelExecutor parallelExecutor, ComponentRequestHandler componentRequestHandler,
-			RequestGlobals requestGlobals, @Symbol(SymbolConstants.CHARSET) String applicationCharset, PerthreadManager perthreadManager,
+	public ComponentJsonRendererImpl(ParallelExecutor parallelExecutor,
+			ComponentRequestHandler componentRequestHandler, RequestGlobals requestGlobals,
+			@Symbol(SymbolConstants.CHARSET) String applicationCharset,
 			ApplicationGlobals applicationGlobals) {
 		super();
 		this.parallelExecutor = parallelExecutor;
 		this.componentRequestHandler = componentRequestHandler;
 		this.requestGlobals = requestGlobals;
 		this.applicationCharset = applicationCharset;
-		this.perthreadManager = perthreadManager;
 		this.applicationGlobals = applicationGlobals;
 	}
 
@@ -51,14 +49,17 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 		return render(parameters, null);
 	}
 
-	public JSONObject render(final ComponentEventRequestParameters parameters, final HttpSession httpSession) {
+	public JSONObject render(final ComponentEventRequestParameters parameters,
+			final HttpSession httpSession) {
 		Future<JSONObject> future = parallelExecutor.invoke(new Invokable<JSONObject>() {
 			public JSONObject invoke() {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				String contextPath = applicationGlobals.getServletContext().getContextPath();
-				final FakeHttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(httpSession, contextPath);
+				final FakeHttpServletRequest fakeHttpRequest = new FakeHttpServletRequest(
+						httpSession, contextPath);
 				fakeHttpRequest.setHeader("X-Requested-With", "XMLHttpRequest");
-				HttpServletResponse fakeHttpResponse = new FakeHttpServletResponse(out, applicationCharset);
+				HttpServletResponse fakeHttpResponse = new FakeHttpServletResponse(out,
+						applicationCharset);
 				TapestrySessionFactory sessionFactory = new TapestrySessionFactory() {
 					public Session getSession(boolean create) {
 						if (httpSession == null) {
@@ -68,7 +69,8 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 						return new SessionImpl(fakeHttpRequest, httpSession);
 					}
 				};
-				Request fakeRequest = new RequestImpl(fakeHttpRequest, applicationCharset, sessionFactory);
+				Request fakeRequest = new RequestImpl(fakeHttpRequest, applicationCharset,
+						sessionFactory);
 				Response fakeResponse = new ResponseImpl(fakeHttpRequest, fakeHttpResponse);
 
 				try {
@@ -79,10 +81,7 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 					return new JSONObject(jsonString);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
-				} finally {
-					perthreadManager.cleanup();
 				}
-
 			}
 		});
 		try {
