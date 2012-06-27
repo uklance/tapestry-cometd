@@ -1,5 +1,4 @@
-tapestry-cometd
-===============
+# Tapestry CometD
 
 ### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) implementation for [Tapestry](http://tapestry.apache.org/) based on [CometD](http://cometd.org/)
 
