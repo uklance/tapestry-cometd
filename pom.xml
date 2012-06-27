@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lazan</groupId>
 	<artifactId>tapestry-cometd</artifactId>
-	<version>0.9.8-SNAPSHOT</version>
+	<version>0.9.8</version>
 	<packaging>jar</packaging>
 	<name>tapestry-cometd Tapestry 5 Application</name>
 	<dependencies>
@@ -19,13 +19,8 @@
 
 		<!-- This adds automatic compression of JavaScript and CSS when in production 
 			mode. -->
-		<!-- 
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-yuicompressor</artifactId>
-			<version>${tapestry-release-version}</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-yuicompressor</artifactId> 
+			<version>${tapestry-release-version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-test</artifactId>
@@ -57,17 +52,17 @@
 			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
-		
-        <dependency>
-            <groupId>org.cometd.java</groupId>
-            <artifactId>cometd-java-server</artifactId>
-            <version>2.4.3</version>
-        </dependency>		
-        <dependency>
-            <groupId>org.cometd.java</groupId>
-            <artifactId>cometd-websocket-jetty</artifactId>
-            <version>2.4.3</version>
-        </dependency>		
+
+		<dependency>
+			<groupId>org.cometd.java</groupId>
+			<artifactId>cometd-java-server</artifactId>
+			<version>2.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cometd.java</groupId>
+			<artifactId>cometd-websocket-jetty</artifactId>
+			<version>2.4.3</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>tapestry-cometd</finalName>
@@ -104,6 +99,32 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
