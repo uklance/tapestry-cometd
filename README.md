@@ -30,8 +30,8 @@ Page.tml
 		</form>
 	</t:zone>
 
-	<!-- this PushTarget subscribes to the 'chatTopic' topic and appends received messages to itself -->
-	<t:cometd.PushTarget topic="chatTopic" event="chat" update="APPEND" />
+	<!-- this PushTarget subscribes to the '/chatTopic' topic and appends received messages to itself -->
+	<t:cometd.PushTarget topic="/chatTopic" event="chat" update="APPEND" />
 
 	<!-- this template is applied to each chat message when it is received -->
 	<t:block t:id="messageBlock">
@@ -65,7 +65,7 @@ public class PushDemo {
 	// this event is fired when the form is posted
 	Block onSuccess() {
 		// broadcast the message on the 'chatTopic' topic
-		pushManager.broadcast("chatTopic", message);
+		pushManager.broadcast("/chatTopic", message);
 		return formZone.getBody();
 	}
 }
@@ -77,7 +77,7 @@ public class PushDemo {
 	<dependency>
 		<groupId>org.lazan</groupId>
 		<artifactId>tapestry-cometd</artifactId>
-		<version>0.9.6</version>
+		<version>0.9.8</version>
 	</dependency>
 
 	<dependency>
