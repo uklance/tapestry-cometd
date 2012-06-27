@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
@@ -21,11 +22,16 @@ public class ServletHttpServletRequestFilter implements HttpServletRequestFilter
 	private final HttpServlet servlet;
 	private final Pattern uriPattern;
 	
-	public ServletHttpServletRequestFilter(ApplicationGlobals applicationGlobals, ServletFactory servletFactory, String uriPattern) {
+	public ServletHttpServletRequestFilter(ApplicationGlobals applicationGlobals, ServletFactory servletFactory, RegistryShutdownHub registryShutdownHub, String uriPattern) {
 		try {
 			this.servlet = servletFactory.createServlet();
 			this.servlet.init(createServletConfig(applicationGlobals, servletFactory));
 			this.uriPattern = Pattern.compile(uriPattern, Pattern.CASE_INSENSITIVE);
+			registryShutdownHub.addRegistryShutdownListener(new Runnable() {
+				public void run() {
+					servlet.destroy();
+				}
+			});
 		} catch (ServletException e) {
 			throw new RuntimeException(e);
 		}
