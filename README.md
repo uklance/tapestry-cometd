@@ -9,7 +9,7 @@
 * [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use strings or custom objects)
 * Built on top of the rock solid [CometD](http://cometd.org/) library
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
-* Topic abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
+* [Topic](https://github.com/uklance/tapestry-cometd/wiki/Topics) abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
 * Custom [Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
 * Custom [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
