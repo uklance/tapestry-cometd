@@ -123,4 +123,5 @@ support older servlet containers.
 * [Configuring the CometD Servlet](https://github.com/uklance/tapestry-cometd/wiki/Configuring-the-CometD-Servlet)
 * [Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
 * [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
+* [Topics](https://github.com/uklance/tapestry-cometd/wiki/Topics)
 * [FAQ](https://github.com/uklance/tapestry-cometd/wiki/FAQ)
