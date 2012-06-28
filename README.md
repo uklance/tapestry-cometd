@@ -1,6 +1,6 @@
 ![Tapestry CometD](https://github.com/uklance/tapestry-cometd/raw/master/logo-m.jpg)
 
-### A [push](http://en.wikipedia.org/wiki/Comet_%28programming%29) library for [Tapestry](http://tapestry.apache.org/) based on [CometD](http://cometd.org/)
+### A [push](http://en.wikipedia.org/wiki/Push_technology) library for [Tapestry](http://tapestry.apache.org/) based on [CometD](http://cometd.org/)
 
 ## Features:
 * Zero Javascript required
