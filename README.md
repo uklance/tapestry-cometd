@@ -30,7 +30,7 @@ Page.tml
 	</t:zone>
 
 	<!-- this PushTarget subscribes to the '/chatTopic' topic and appends received messages to itself -->
-	<t:cometd.PushTarget topic="/chatTopic" event="chat" update="APPEND" />
+	<t:cometd.PushTarget topic="/chatTopic" event="chat" update="append" />
 
 	<!-- this template is applied to each chat message when it is received -->
 	<t:block t:id="messageBlock">
