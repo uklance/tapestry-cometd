@@ -2,7 +2,7 @@ package org.lazan.t5.cometd.services.internal;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +12,7 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -33,8 +34,9 @@ public class PushManagerImpl implements PushManager {
 	private final CometdGlobals cometdGlobals;
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
 
-	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger, ComponentJsonRenderer componentStringRenderer,
-			TypeCoercer typeCoercer, HttpServletRequest request, CometdGlobals cometdGlobals) {
+	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger,
+			ComponentJsonRenderer componentStringRenderer, TypeCoercer typeCoercer,
+			HttpServletRequest request, CometdGlobals cometdGlobals) {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.addListener(new DisconnectListener());
 		this.logger = logger;
@@ -54,13 +56,15 @@ public class PushManagerImpl implements PushManager {
 						logger.error("ClientContext unknown for channelId {}", channelId);
 					} else {
 						ComponentEventRequestParameters eventParams = new ComponentEventRequestParameters(
-								clientContext.getActivePageName(), clientContext.getContainingPageName(),
-								clientContext.getNestedComponentId(), clientContext.getEventType(), EMPTY_EVENT_CONTEXT,
-								new ArrayEventContext(typeCoercer, context));
+								clientContext.getActivePageName(),
+								clientContext.getContainingPageName(),
+								clientContext.getNestedComponentId(), clientContext.getEventType(),
+								EMPTY_EVENT_CONTEXT, new ArrayEventContext(typeCoercer, context));
 						if (clientContext.isSession()) {
 							deliverSessionMessages(channel, eventParams);
 						} else {
-							deliverNonSessionMessages(channel, eventParams);
+							// HttpSession not required, all subscribers share the same message
+							deliver(channel, eventParams, null);
 						}
 					}
 				}
@@ -68,35 +72,56 @@ public class PushManagerImpl implements PushManager {
 		}
 	}
 
-	private void deliverNonSessionMessages(ServerChannel channel, ComponentEventRequestParameters eventParams) {
-		// HttpSession not required, all subscribers share the same message
-		JSONObject json = componentStringRenderer.render(eventParams);
-		Map<String, String> message = new HashMap<String, String>();
-		message.put("content", json.getString("content"));
-		channel.publish(null, message, null);
+	private void deliver(ServerChannel channel, ComponentEventRequestParameters eventParams, HttpSession httpSession) {
+		JSONObject json = componentStringRenderer.render(eventParams, httpSession);
+		Map<String, Object> data = unwrapJsonObject(json);
+		channel.publish(null, data, null);
 	}
 
-	private void deliverSessionMessages(ServerChannel channel, ComponentEventRequestParameters eventParams) {
+	@SuppressWarnings("unchecked")
+	private void deliverSessionMessages(ServerChannel channel,
+			ComponentEventRequestParameters eventParams) {
 		// component rendering requires the HttpSession so each subscriber
 		// requires it's own render of the component
 		for (ServerSession subscriber : channel.getSubscribers()) {
-			WeakReference<HttpSession> sessionRef = (WeakReference<HttpSession>) subscriber.getAttribute("sessionRef");
-			HttpSession session = sessionRef == null ? null : sessionRef.get();
-			if (session == null) {
-				logger.error("No session reference for channelId {}, serverSession {}", channel.getId(), subscriber.getId());
+			WeakReference<HttpSession> sessionRef = (WeakReference<HttpSession>) subscriber
+					.getAttribute(PushConstants.ATTRIBUTE_SESSION_REFERENCE);
+			HttpSession httpSession = sessionRef == null ? null : sessionRef.get();
+			if (httpSession == null) {
+				logger.error("No session reference for channelId {}, serverSession {}",
+						channel.getId(), subscriber.getId());
 			} else {
-				JSONObject json = componentStringRenderer.render(eventParams);
-				Map<String, String> message = new HashMap<String, String>();
-				message.put("content", json.getString("content"));
-				subscriber.deliver(null, channel.getId(), message, null);
+				deliver(channel, eventParams, httpSession);
 			}
 		}
 	}
-
-	public void service(final String clientId, Object... context) {
-		throw new UnsupportedOperationException();
+	
+	protected Map<String, Object> unwrapJsonObject(JSONObject json) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		for (String key : json.keys()) {
+			Object value = json.get(key);
+			map.put(key, unwrapObject(value));
+		}
+		return map;
 	}
-
+	
+	protected Object unwrapObject(Object value) {
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof JSONObject) {
+			return unwrapJsonObject((JSONObject) value);
+		}
+		if (value instanceof JSONArray) {
+			JSONArray jsonArr = (JSONArray) value;
+			Object[] arr = new Object[jsonArr.length()];
+			for (int i = 0; i < arr.length; ++ i) {
+				arr[i] = unwrapObject(jsonArr.get(i));
+			}
+			return arr;
+		}
+		return value;
+	}
 
 	public class DisconnectListener implements ChannelListener {
 		public void channelAdded(ServerChannel channel) {

@@ -61,7 +61,7 @@ public class AuthorizersImpl implements Authorizers {
 			}
 			if (clientContext.isSession()) {
 				WeakReference<HttpSession> sessionRef = new WeakReference<HttpSession>(request.getSession());
-				serverSession.setAttribute("sessionRef", sessionRef);
+				serverSession.setAttribute(PushConstants.ATTRIBUTE_SESSION_REFERENCE, sessionRef);
 			}
 			if (firstClient) {
 				cometdGlobals.setClientContext(channelId, clientContext);
