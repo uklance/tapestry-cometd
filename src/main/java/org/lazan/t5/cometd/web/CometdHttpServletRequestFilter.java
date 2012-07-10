@@ -13,7 +13,7 @@ import org.cometd.server.CometdServlet;
 
 @UsesMappedConfiguration(key = String.class, value = String.class)
 public class CometdHttpServletRequestFilter extends ServletHttpServletRequestFilter implements
-		BayeuxServletHttpServletRequestFilter {
+		BayeuxServerHttpServletRequestFilter {
 	public static final String SERVLET_NAME = "cometd";
 
 	private final BayeuxServer bayeuxServer;

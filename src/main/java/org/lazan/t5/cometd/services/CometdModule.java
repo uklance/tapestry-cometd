@@ -15,13 +15,13 @@ import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
 import org.lazan.t5.cometd.services.internal.ComponentJsonRendererImpl;
 import org.lazan.t5.cometd.services.internal.PushManagerImpl;
 import org.lazan.t5.cometd.services.internal.SubscriptionListenersImpl;
-import org.lazan.t5.cometd.web.BayeuxServletHttpServletRequestFilter;
+import org.lazan.t5.cometd.web.BayeuxServerHttpServletRequestFilter;
 import org.lazan.t5.cometd.web.CometdHttpServletRequestFilter;
 import org.slf4j.Logger;
 
 public class CometdModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(BayeuxServletHttpServletRequestFilter.class,
+		binder.bind(BayeuxServerHttpServletRequestFilter.class,
 				CometdHttpServletRequestFilter.class);
 		binder.bind(PushManager.class, PushManagerImpl.class).eagerLoad();
 		binder.bind(ComponentJsonRenderer.class, ComponentJsonRendererImpl.class);
@@ -38,7 +38,7 @@ public class CometdModule {
 
 	public static void contributeHttpServletRequestHandler(
 			OrderedConfiguration<HttpServletRequestFilter> configuration,
-			BayeuxServletHttpServletRequestFilter cometdHttpServletRequestFilter) {
+			BayeuxServerHttpServletRequestFilter cometdHttpServletRequestFilter) {
 		configuration.add("cometd", cometdHttpServletRequestFilter);
 	}
 
@@ -51,7 +51,7 @@ public class CometdModule {
 		configuration.add(new LibraryMapping("cometd", "org.lazan.t5.cometd"));
 	}
 
-	public static void contributeBayeuxServletHttpServletRequestFilter(
+	public static void contributeBayeuxServerHttpServletRequestFilter(
 			MappedConfiguration<String, Object> config, SymbolSource symbolSource) {
 		// add init-params for the Cometd servlet here
 		config.add("logLevel", "2");
@@ -59,7 +59,7 @@ public class CometdModule {
 	}
 
 	public static BayeuxServer buildBayeuxServer(
-			BayeuxServletHttpServletRequestFilter cometdHttpServletRequestFilter,
+			BayeuxServerHttpServletRequestFilter cometdHttpServletRequestFilter,
 			Authorizers authorizers, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals) {
 		BayeuxServer bayeuxServer = cometdHttpServletRequestFilter.getBayeuxServer();
 		bayeuxServer.createIfAbsent("/push-target/**");
