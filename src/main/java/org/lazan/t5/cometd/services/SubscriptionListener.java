@@ -1,6 +1,5 @@
 package org.lazan.t5.cometd.services;
 
-import org.lazan.t5.cometd.ClientContext;
 
 public interface SubscriptionListener {
 	/**
@@ -11,7 +10,7 @@ public interface SubscriptionListener {
 	 */
 	public String getTopic();
 
-	public void onSubscribe(ClientContext context);
+	public void onSubscribe(PushSession pushSession);
 
-	public void onUnsubscribe(ClientContext context);
+	public void onUnsubscribe(PushSession pushSession);
 }

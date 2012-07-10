@@ -1,12 +1,14 @@
 package org.lazan.t5.cometd.services.internal;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
-import org.lazan.t5.cometd.ClientContext;
+import org.lazan.t5.cometd.internal.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
+import org.lazan.t5.cometd.services.PushSession;
 import org.lazan.t5.cometd.services.SubscriptionListener;
 import org.lazan.t5.cometd.services.SubscriptionListeners;
 
@@ -31,22 +33,30 @@ public class SubscriptionListenersImpl implements SubscriptionListeners {
 		return listeners.removeMatcher(listener.getTopic(), listener);
 	}
 	
-	public void subscribed(ServerSession session, ServerChannel channel) {
+	public void subscribed(ServerSession serverSession, ServerChannel channel) {
 		ClientContext clientContext = cometdGlobals.getClientContext(channel.getId());
 		if (clientContext != null) {
 			String topic = clientContext.getTopic();
-			for (SubscriptionListener listener : listeners.getMatches(topic)) {
-				listener.onSubscribe(clientContext);
+			Set<SubscriptionListener> matches = listeners.getMatches(topic);
+			if (!matches.isEmpty()) {
+				PushSession pushSession = new PushSessionImpl(serverSession, clientContext);
+				for (SubscriptionListener listener : matches) {
+					listener.onSubscribe(pushSession);
+				}
 			}
 		}
 	}
 	
-	public void unsubscribed(ServerSession session, ServerChannel channel) {
+	public void unsubscribed(ServerSession serverSession, ServerChannel channel) {
 		ClientContext clientContext = cometdGlobals.getClientContext(channel.getId());
 		if (clientContext != null) {
 			String topic = clientContext.getTopic();
-			for (SubscriptionListener listener : listeners.getMatches(topic)) {
-				listener.onUnsubscribe(clientContext);
+			Set<SubscriptionListener> matches = listeners.getMatches(topic);
+			if (!matches.isEmpty()) {
+				PushSession pushSession = new PushSessionImpl(serverSession, clientContext);
+				for (SubscriptionListener listener : matches) {
+					listener.onUnsubscribe(pushSession);
+				}
 			}
 		}
 	}

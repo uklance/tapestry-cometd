@@ -19,7 +19,7 @@ import org.cometd.bayeux.server.BayeuxServer.ChannelListener;
 import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
-import org.lazan.t5.cometd.ClientContext;
+import org.lazan.t5.cometd.internal.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
 import org.lazan.t5.cometd.services.ComponentJsonRenderer;
 import org.lazan.t5.cometd.services.PushManager;

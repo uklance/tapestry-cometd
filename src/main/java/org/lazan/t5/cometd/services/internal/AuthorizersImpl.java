@@ -11,10 +11,11 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
-import org.lazan.t5.cometd.ClientContext;
+import org.lazan.t5.cometd.internal.ClientContext;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
+import org.lazan.t5.cometd.services.PushSession;
 
 @UsesOrderedConfiguration(Authorizer.class)
 public class AuthorizersImpl implements Authorizers {
@@ -51,9 +52,10 @@ public class AuthorizersImpl implements Authorizers {
 				firstClient = true;
 				clientContext = getClientContext(data);
 			}
+			PushSession pushSession = new PushSessionImpl(serverSession, clientContext);
 			String topic = clientContext.getTopic();
 			for (Authorizer auth : authorizers.getMatches(topic)) {
-				if (!auth.isAuthorized(clientContext)) {
+				if (!auth.isAuthorized(pushSession)) {
 					return Result.deny("Authorization failure");
 				}
 			}
