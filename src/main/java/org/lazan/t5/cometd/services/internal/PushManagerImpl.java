@@ -2,7 +2,6 @@ package org.lazan.t5.cometd.services.internal;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +11,6 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -74,7 +72,7 @@ public class PushManagerImpl implements PushManager {
 
 	private void deliver(ServerChannel channel, ComponentEventRequestParameters eventParams, HttpSession httpSession) {
 		JSONObject json = componentStringRenderer.render(eventParams, httpSession);
-		Map<String, Object> data = unwrapJsonObject(json);
+		Map<String, Object> data = JsonUtils.unwrap(json);
 		channel.publish(null, data, null);
 	}
 
@@ -96,33 +94,6 @@ public class PushManagerImpl implements PushManager {
 		}
 	}
 	
-	protected Map<String, Object> unwrapJsonObject(JSONObject json) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		for (String key : json.keys()) {
-			Object value = json.get(key);
-			map.put(key, unwrapObject(value));
-		}
-		return map;
-	}
-	
-	protected Object unwrapObject(Object value) {
-		if (value == null) {
-			return null;
-		}
-		if (value instanceof JSONObject) {
-			return unwrapJsonObject((JSONObject) value);
-		}
-		if (value instanceof JSONArray) {
-			JSONArray jsonArr = (JSONArray) value;
-			Object[] arr = new Object[jsonArr.length()];
-			for (int i = 0; i < arr.length; ++ i) {
-				arr[i] = unwrapObject(jsonArr.get(i));
-			}
-			return arr;
-		}
-		return value;
-	}
-
 	public class DisconnectListener implements ChannelListener {
 		public void channelAdded(ServerChannel channel) {
 		}

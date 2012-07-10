@@ -32,8 +32,7 @@ Tapestry.Initializer.push = function(spec)
 						*/
 						// TODO
 					}
-					//TODO
-					//$.tapestry.utils.loadScriptsInReply(message.data, specs.callback);
+					$.tapestry.utils.loadScriptsInReply(message.data);
 				};
 				cometd.subscribe(subSpec.initData.channelId, undefined, callback, { data: subSpec.initData });
 			}
