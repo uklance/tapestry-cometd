@@ -125,3 +125,4 @@ support older servlet containers.
 * [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
 * [Topics](https://github.com/uklance/tapestry-cometd/wiki/Topics)
 * [FAQ](https://github.com/uklance/tapestry-cometd/wiki/FAQ)
+* [Pushing javascript to the client](https://github.com/uklance/tapestry-cometd/wiki/Pushing-javascript-to-the-client)
