@@ -51,7 +51,7 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 
 	public JSONObject render(final ComponentEventRequestParameters parameters,
 			final HttpSession httpSession) {
-		Future<JSONObject> future = parallelExecutor.invoke(new Invokable<JSONObject>() {
+		Invokable<JSONObject> invokable = new Invokable<JSONObject>() {
 			public JSONObject invoke() {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				String contextPath = applicationGlobals.getServletContext().getContextPath();
@@ -83,8 +83,9 @@ public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
 					throw new RuntimeException(e);
 				}
 			}
-		});
+		};
 		try {
+			Future<JSONObject> future = parallelExecutor.invoke(invokable);
 			return future.get();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
