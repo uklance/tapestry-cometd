@@ -13,6 +13,7 @@
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
 * Custom [Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
 * Custom [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
+* Push [dynamic javascript](https://github.com/uklance/tapestry-cometd/wiki/Pushing-javascript-to-the-client) to the client
 
 ## Usage:
 
