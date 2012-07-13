@@ -11,8 +11,8 @@
 * Supports [Jetty Continuations](http://wiki.eclipse.org/Jetty/Feature/Continuations)
 * [Topic](https://github.com/uklance/tapestry-cometd/wiki/Topics) abstraction (on top of [CometD channels](http://cometd.org/documentation/cometd-java/server/channel))
 * Choice of client update strategies when a message arrives ([append](http://api.jquery.com/append/), [prepend](http://api.jquery.com/prepend/) or [replace](http://api.jquery.com/html/))
-* Custom [Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
-* Custom [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
+* Custom [Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Custom-Authorizers)
+* Custom [Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Custom-Subscription-Listeners)
 * Push [dynamic javascript](https://github.com/uklance/tapestry-cometd/wiki/Pushing-javascript-to-the-client) to the client
 
 ## Usage:
@@ -121,8 +121,8 @@ newer version of jetty. There is an [issue](https://github.com/uklance/tapestry-
 support older servlet containers.
 
 ## Links
-* [Custom Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
-* [Custom Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
+* [Custom Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Custom-Authorizers)
+* [Custom Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Custom-Subscription-Listeners)
 * [Topics](https://github.com/uklance/tapestry-cometd/wiki/Topics)
 * [Pushing javascript to the client](https://github.com/uklance/tapestry-cometd/wiki/Pushing-javascript-to-the-client)
 * [Configuring the CometD Servlet](https://github.com/uklance/tapestry-cometd/wiki/Configuring-the-CometD-Servlet)
