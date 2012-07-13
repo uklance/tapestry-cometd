@@ -121,9 +121,9 @@ newer version of jetty. There is an [issue](https://github.com/uklance/tapestry-
 support older servlet containers.
 
 ## Links
-* [Configuring the CometD Servlet](https://github.com/uklance/tapestry-cometd/wiki/Configuring-the-CometD-Servlet)
 * [Custom Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Authorizers)
 * [Custom Subscription Listeners](https://github.com/uklance/tapestry-cometd/wiki/Subscription-Listeners)
 * [Topics](https://github.com/uklance/tapestry-cometd/wiki/Topics)
-* [FAQ](https://github.com/uklance/tapestry-cometd/wiki/FAQ)
 * [Pushing javascript to the client](https://github.com/uklance/tapestry-cometd/wiki/Pushing-javascript-to-the-client)
+* [Configuring the CometD Servlet](https://github.com/uklance/tapestry-cometd/wiki/Configuring-the-CometD-Servlet)
+* [FAQ](https://github.com/uklance/tapestry-cometd/wiki/FAQ)
