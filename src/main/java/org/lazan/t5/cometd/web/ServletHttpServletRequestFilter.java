@@ -22,11 +22,11 @@ public class ServletHttpServletRequestFilter implements HttpServletRequestFilter
 	private final HttpServlet servlet;
 	private final Pattern uriPattern;
 	
-	public ServletHttpServletRequestFilter(ApplicationGlobals applicationGlobals, ServletFactory servletFactory, RegistryShutdownHub registryShutdownHub, String uriPattern) {
+	public ServletHttpServletRequestFilter(ApplicationGlobals applicationGlobals, ServletFactory servletFactory, RegistryShutdownHub registryShutdownHub, String uri) {
 		try {
 			this.servlet = servletFactory.createServlet();
 			this.servlet.init(createServletConfig(applicationGlobals, servletFactory));
-			this.uriPattern = Pattern.compile(uriPattern, Pattern.CASE_INSENSITIVE);
+			this.uriPattern = Pattern.compile(uri + "(/.*)?", Pattern.CASE_INSENSITIVE);
 			registryShutdownHub.addRegistryShutdownListener(new Runnable() {
 				public void run() {
 					servlet.destroy();

@@ -8,8 +8,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.services.ApplicationGlobals;
+import org.atmosphere.cometd.CometdServlet;
 import org.cometd.bayeux.server.BayeuxServer;
-import org.cometd.server.CometdServlet;
 
 @UsesMappedConfiguration(key = String.class, value = String.class)
 public class CometdHttpServletRequestFilter extends ServletHttpServletRequestFilter implements
@@ -20,8 +20,8 @@ public class CometdHttpServletRequestFilter extends ServletHttpServletRequestFil
 
 	public CometdHttpServletRequestFilter(ApplicationGlobals applicationGlobals,
 			Map<String, String> initParams, RegistryShutdownHub registryShutdownHub,
-			@Symbol("cometd.uriPattern") String uriPattern) {
-		super(applicationGlobals, createServletFactory(initParams), registryShutdownHub, uriPattern);
+			@Symbol("cometd.uri") String uri) {
+		super(applicationGlobals, createServletFactory(initParams), registryShutdownHub, uri);
 		this.bayeuxServer = (BayeuxServer) applicationGlobals.getServletContext().getAttribute(
 				BayeuxServer.ATTRIBUTE);
 	}

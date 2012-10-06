@@ -33,7 +33,7 @@ public class CometdModule {
 	}
 
 	public static void contributeFactoryDefaults(MappedConfiguration<String, Object> config) {
-		config.add("cometd.uriPattern", "/cometd(/.*)?");
+		config.add("cometd.uri", "/cometd");
 	}
 
 	public static void contributeHttpServletRequestHandler(
@@ -56,7 +56,7 @@ public class CometdModule {
 		// add init-params for the Cometd servlet here
 		config.add("logLevel", "2");
 		config.add("transports", "org.cometd.websocket.server.WebSocketTransport");
-		config.add("org.atmosphere.useStream", "true");
+		config.add("org.atmosphere.useStream", "false");
 	}
 
 	public static BayeuxServer buildBayeuxServer(
