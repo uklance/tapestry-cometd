@@ -22,18 +22,18 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
-import org.lazan.t5.cometd.services.ComponentJsonRenderer;
+import org.lazan.t5.cometd.services.ComponentJSONRenderer;
 import org.lazan.t5.cometd.web.FakeHttpServletRequest;
 import org.lazan.t5.cometd.web.FakeHttpServletResponse;
 
-public class ComponentJsonRendererImpl implements ComponentJsonRenderer {
+public class ComponentJSONRendererImpl implements ComponentJSONRenderer {
 	private final ParallelExecutor parallelExecutor;
 	private final ComponentRequestHandler componentRequestHandler;
 	private final RequestGlobals requestGlobals;
 	private final String applicationCharset;
 	private final ApplicationGlobals applicationGlobals;
 
-	public ComponentJsonRendererImpl(ParallelExecutor parallelExecutor,
+	public ComponentJSONRendererImpl(ParallelExecutor parallelExecutor,
 			ComponentRequestHandler componentRequestHandler, RequestGlobals requestGlobals,
 			@Symbol(SymbolConstants.CHARSET) String applicationCharset,
 			ApplicationGlobals applicationGlobals) {

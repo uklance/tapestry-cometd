@@ -13,32 +13,33 @@ import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.internal.ClientContext;
 import org.lazan.t5.cometd.services.Authorizer;
+import org.lazan.t5.cometd.services.AuthorizerContribution;
 import org.lazan.t5.cometd.services.Authorizers;
 import org.lazan.t5.cometd.services.CometdGlobals;
 import org.lazan.t5.cometd.services.PushSession;
 
-@UsesOrderedConfiguration(Authorizer.class)
+@UsesOrderedConfiguration(AuthorizerContribution.class)
 public class AuthorizersImpl implements Authorizers {
 	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
 	private final HttpServletRequest request;
 	
-	public AuthorizersImpl(List<Authorizer> authorizers, CometdGlobals cometdGlobals, HttpServletRequest request) {
+	public AuthorizersImpl(List<AuthorizerContribution> contributions, CometdGlobals cometdGlobals, HttpServletRequest request) {
 		super();
 		this.authorizers = new TopicMatchers<Authorizer>();
-		for (Authorizer auth : authorizers) {
-			addAuthorizer(auth);
+		for (AuthorizerContribution contribution : contributions) {
+			addAuthorizer(contribution.getTopic(), contribution.getAuthorizer());
 		}
 		this.cometdGlobals = cometdGlobals;
 		this.request = request;
 	}
 	
-	public void addAuthorizer(Authorizer auth) {
-		authorizers.addMatcher(auth.getTopic(), auth);
+	public void addAuthorizer(String topic, Authorizer auth) {
+		authorizers.addMatcher(topic, auth);
 	}
 	
-	public boolean removeAuthorizer(Authorizer auth) {
-		return authorizers.removeMatcher(auth.getTopic(), auth);
+	public boolean removeAuthorizer(String topic, Authorizer auth) {
+		return authorizers.removeMatcher(topic, auth);
 	}
 
 	public Result authorize(Operation operation, ChannelId channel, ServerSession serverSession, ServerMessage message) {

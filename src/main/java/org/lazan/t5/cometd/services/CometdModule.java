@@ -12,7 +12,7 @@ import org.cometd.bayeux.server.ServerChannel;
 import org.lazan.t5.cometd.services.internal.AuthorizersImpl;
 import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
 import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
-import org.lazan.t5.cometd.services.internal.ComponentJsonRendererImpl;
+import org.lazan.t5.cometd.services.internal.ComponentJSONRendererImpl;
 import org.lazan.t5.cometd.services.internal.PushManagerImpl;
 import org.lazan.t5.cometd.services.internal.SubscriptionListenersImpl;
 import org.lazan.t5.cometd.web.BayeuxServerHttpServletRequestFilter;
@@ -24,7 +24,7 @@ public class CometdModule {
 		binder.bind(BayeuxServerHttpServletRequestFilter.class,
 				CometdHttpServletRequestFilter.class);
 		binder.bind(PushManager.class, PushManagerImpl.class).eagerLoad();
-		binder.bind(ComponentJsonRenderer.class, ComponentJsonRendererImpl.class);
+		binder.bind(ComponentJSONRenderer.class, ComponentJSONRendererImpl.class);
 		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
 		binder.bind(CometdGlobals.class, CometdGlobalsImpl.class);
 		binder.bind(Authorizers.class, AuthorizersImpl.class);
@@ -56,6 +56,7 @@ public class CometdModule {
 		// add init-params for the Cometd servlet here
 		config.add("logLevel", "2");
 		config.add("transports", "org.cometd.websocket.server.WebSocketTransport");
+		config.add("org.atmosphere.useStream", "true");
 	}
 
 	public static BayeuxServer buildBayeuxServer(

@@ -7,7 +7,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class JsonUtilsTest extends JsonUtils {
+public class JSONUtilsTest extends JSONUtils {
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -20,7 +20,7 @@ public class JsonUtilsTest extends JsonUtils {
 		JSONObject nested = new JSONObject("key", "value");
 		json.put("nested", nested);
 		
-		Map<String, Object> result = JsonUtils.unwrap(json);
+		Map<String, Object> result = JSONUtils.unwrap(json);
 		Assert.assertEquals("foo", result.get("string"));
 		Assert.assertEquals(1, result.get("integer"));
 		Assert.assertArrayEquals(new Object[] { 1, 2, 3 }, (Object[]) result.get("array"));

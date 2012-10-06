@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 
-public interface ComponentJsonRenderer {
+public interface ComponentJSONRenderer {
 	public JSONObject render(ComponentEventRequestParameters parameters);
 	public JSONObject render(ComponentEventRequestParameters parameters, HttpSession session);
 }

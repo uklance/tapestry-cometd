@@ -20,20 +20,20 @@ import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
 import org.lazan.t5.cometd.internal.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
-import org.lazan.t5.cometd.services.ComponentJsonRenderer;
+import org.lazan.t5.cometd.services.ComponentJSONRenderer;
 import org.lazan.t5.cometd.services.PushManager;
 import org.slf4j.Logger;
 
 public class PushManagerImpl implements PushManager {
 	private final BayeuxServer bayeuxServer;
 	private final Logger logger;
-	private final ComponentJsonRenderer componentStringRenderer;
+	private final ComponentJSONRenderer componentStringRenderer;
 	private final TypeCoercer typeCoercer;
 	private final CometdGlobals cometdGlobals;
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
 
 	public PushManagerImpl(BayeuxServer bayeuxServer, Logger logger,
-			ComponentJsonRenderer componentStringRenderer, TypeCoercer typeCoercer,
+			ComponentJSONRenderer componentStringRenderer, TypeCoercer typeCoercer,
 			HttpServletRequest request, CometdGlobals cometdGlobals) {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.addListener(new DisconnectListener());
@@ -72,7 +72,7 @@ public class PushManagerImpl implements PushManager {
 
 	private void deliver(ServerChannel channel, ComponentEventRequestParameters eventParams, HttpSession httpSession) {
 		JSONObject json = componentStringRenderer.render(eventParams, httpSession);
-		Map<String, Object> data = JsonUtils.unwrap(json);
+		Map<String, Object> data = JSONUtils.unwrap(json);
 		channel.publish(null, data, null);
 	}
 
