@@ -77,7 +77,8 @@ public class PushDemo {
 	<dependency>
 		<groupId>org.lazan</groupId>
 		<artifactId>tapestry-cometd</artifactId>
-		<version>0.9.10</version>
+		<version>...</version> 
+		<!-- lookup latest version at https://github.com/uklance/releases/tree/master/org/lazan/tapestry-cometd -->
 	</dependency>
 
 	<dependency>
