@@ -77,8 +77,11 @@ public class PushDemo {
 	<dependency>
 		<groupId>org.lazan</groupId>
 		<artifactId>tapestry-cometd</artifactId>
+		<!-- 
+                	lookup latest version at 
+			https://github.com/uklance/releases/tree/master/org/lazan/tapestry-cometd 
+		-->
 		<version>...</version> 
-		<!-- lookup latest version at https://github.com/uklance/releases/tree/master/org/lazan/tapestry-cometd -->
 	</dependency>
 
 	<dependency>
@@ -115,11 +118,6 @@ mvn jetty:run
 After jetty starts, point your browser to 
 * [http://localhost:8080/tapestry-cometd-demo/Stocks](http://localhost:8080/tapestry-cometd-demo/Stocks)
 * [http://localhost:8080/tapestry-cometd-demo/Chat](http://localhost:8080/tapestry-cometd-demo/Chat)
-
-Note: You will see exceptions being logged if you run through maven due to an old version of jetty.
-You can use the [run jetty run](http://code.google.com/p/run-jetty-run/) eclipse plugin to quickly run a
-newer version of jetty. There is an [issue](https://github.com/uklance/tapestry-cometd/issues/28) to 
-support older servlet containers.
 
 ## Links
 * [Custom Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Custom-Authorizers)
