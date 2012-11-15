@@ -3,7 +3,7 @@
 ### A [push](http://en.wikipedia.org/wiki/Push_technology) library for [Tapestry](http://tapestry.apache.org/) based on [CometD](http://cometd.org/)
 
 ## Features:
-* Zero Javascript required
+* Create push applications without writing a single line of Javascript
 * Fully configurable
 * Use [Tapestry templates](http://tapestry.apache.org/component-templates.html) to format incoming messages
 * [POJO](http://en.wikipedia.org/wiki/Plain_Old_Java_Object) messages (use strings or custom objects)
