@@ -26,6 +26,12 @@ import org.lazan.t5.cometd.services.ComponentJSONRenderer;
 import org.lazan.t5.cometd.web.FakeHttpServletRequest;
 import org.lazan.t5.cometd.web.FakeHttpServletResponse;
 
+/**
+ * This service is able to invoke tapestry component rendering without a HttpServletRequest or HttpServletResponse.
+ * Instead, a fake request and response are created to fool tapestry into thinking a web request has been made.
+ * 
+ * TODO: extract this service into a separate 'tapestry-offline' module'
+ */
 public class ComponentJSONRendererImpl implements ComponentJSONRenderer {
 	private final ParallelExecutor parallelExecutor;
 	private final ComponentRequestHandler componentRequestHandler;
@@ -85,6 +91,8 @@ public class ComponentJSONRendererImpl implements ComponentJSONRenderer {
 			}
 		};
 		try {
+			// tapestry component rendering sets various ThreadLocal variables. It's best to get the 
+			// parallelExecutor to perform the component rendering and avoid 'dirtying' the current thread
 			Future<JSONObject> future = parallelExecutor.invoke(invokable);
 			return future.get();
 		} catch (Exception e) {
