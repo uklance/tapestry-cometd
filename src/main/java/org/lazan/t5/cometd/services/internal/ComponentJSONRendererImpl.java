@@ -30,7 +30,7 @@ import org.lazan.t5.cometd.web.FakeHttpServletResponse;
  * This service is able to invoke tapestry component rendering without a HttpServletRequest or HttpServletResponse.
  * Instead, a fake request and response are created to fool tapestry into thinking a web request has been made.
  * 
- * TODO: extract this service into a separate 'tapestry-offline' module'
+ * TODO: extract this service into a separate 'tapestry-offline' module
  */
 public class ComponentJSONRendererImpl implements ComponentJSONRenderer {
 	private final ParallelExecutor parallelExecutor;
