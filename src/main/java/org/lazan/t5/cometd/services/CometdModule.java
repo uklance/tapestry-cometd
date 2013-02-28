@@ -12,24 +12,21 @@ import org.cometd.bayeux.server.ServerChannel;
 import org.lazan.t5.cometd.services.internal.AuthorizersImpl;
 import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
 import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
+import org.lazan.t5.cometd.services.internal.CometdHttpServletRequestFilterImpl;
 import org.lazan.t5.cometd.services.internal.ComponentJSONRendererImpl;
 import org.lazan.t5.cometd.services.internal.PushManagerImpl;
 import org.lazan.t5.cometd.services.internal.SubscriptionListenersImpl;
-import org.lazan.t5.cometd.web.BayeuxServerHttpServletRequestFilter;
-import org.lazan.t5.cometd.web.CometdHttpServletRequestFilter;
 import org.slf4j.Logger;
 
 public class CometdModule {
 	public static void bind(ServiceBinder binder) {
-		binder.bind(BayeuxServerHttpServletRequestFilter.class,
-				CometdHttpServletRequestFilter.class);
+		binder.bind(CometdHttpServletRequestFilter.class, CometdHttpServletRequestFilterImpl.class);
 		binder.bind(PushManager.class, PushManagerImpl.class).eagerLoad();
 		binder.bind(ComponentJSONRenderer.class, ComponentJSONRendererImpl.class);
 		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
 		binder.bind(CometdGlobals.class, CometdGlobalsImpl.class);
 		binder.bind(Authorizers.class, AuthorizersImpl.class);
 		binder.bind(SubscriptionListeners.class, SubscriptionListenersImpl.class);
-
 	}
 
 	public static void contributeFactoryDefaults(MappedConfiguration<String, Object> config) {
@@ -38,21 +35,18 @@ public class CometdModule {
 
 	public static void contributeHttpServletRequestHandler(
 			OrderedConfiguration<HttpServletRequestFilter> configuration,
-			BayeuxServerHttpServletRequestFilter cometdHttpServletRequestFilter) {
-		configuration.add("cometd", cometdHttpServletRequestFilter);
+			CometdHttpServletRequestFilter cometdFilter)
+	{
+		configuration.add("cometd", cometdFilter);
 	}
 
-	public static void contributeApplicationDefaults(MappedConfiguration<String, Object> config) {
-	}
-
-	public static void contributeComponentClassResolver(
-			Configuration<LibraryMapping> configuration, Logger log) {
+	public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration, Logger log)
+	{
 		log.info("Registering cometd component library");
 		configuration.add(new LibraryMapping("cometd", "org.lazan.t5.cometd"));
 	}
 
-	public static void contributeBayeuxServerHttpServletRequestFilter(
-			MappedConfiguration<String, Object> config, SymbolSource symbolSource) {
+	public static void contributeCometdHttpServletRequestFilter(MappedConfiguration<String, Object> config, SymbolSource symbolSource) {
 		// add init-params for the Cometd servlet here
 		config.add("logLevel", "2");
 		config.add("transports", "org.cometd.websocket.server.WebSocketTransport");
@@ -60,9 +54,10 @@ public class CometdModule {
 	}
 
 	public static BayeuxServer buildBayeuxServer(
-			BayeuxServerHttpServletRequestFilter cometdHttpServletRequestFilter,
-			Authorizers authorizers, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals) {
-		BayeuxServer bayeuxServer = cometdHttpServletRequestFilter.getBayeuxServer();
+			CometdHttpServletRequestFilter cometdFilter,
+			Authorizers authorizers, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals)
+	{
+		BayeuxServer bayeuxServer = cometdFilter.getBayeuxServer();
 		bayeuxServer.createIfAbsent("/push-target/**");
 		ServerChannel channel = bayeuxServer.getChannel("/push-target/**");
 		channel.addAuthorizer(authorizers);

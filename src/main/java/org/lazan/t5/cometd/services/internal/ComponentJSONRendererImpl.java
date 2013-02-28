@@ -23,8 +23,6 @@ import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.Session;
 import org.lazan.t5.cometd.services.ComponentJSONRenderer;
-import org.lazan.t5.cometd.web.FakeHttpServletRequest;
-import org.lazan.t5.cometd.web.FakeHttpServletResponse;
 
 /**
  * This service is able to invoke tapestry component rendering without a HttpServletRequest or HttpServletResponse.
