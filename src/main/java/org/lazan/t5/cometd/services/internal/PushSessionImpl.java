@@ -3,7 +3,7 @@ package org.lazan.t5.cometd.services.internal;
 import java.util.Set;
 
 import org.cometd.bayeux.server.ServerSession;
-import org.lazan.t5.cometd.internal.ClientContext;
+import org.lazan.t5.cometd.services.ClientContext;
 import org.lazan.t5.cometd.services.PushSession;
 
 public class PushSessionImpl implements PushSession {

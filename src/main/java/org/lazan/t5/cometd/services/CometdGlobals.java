@@ -2,7 +2,6 @@ package org.lazan.t5.cometd.services;
 
 import java.util.Set;
 
-import org.lazan.t5.cometd.internal.ClientContext;
 
 public interface CometdGlobals {
 

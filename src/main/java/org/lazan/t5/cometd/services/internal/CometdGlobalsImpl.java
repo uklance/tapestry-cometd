@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerChannel;
-import org.lazan.t5.cometd.internal.ClientContext;
+import org.lazan.t5.cometd.services.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
 
 public class CometdGlobalsImpl implements CometdGlobals {

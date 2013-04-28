@@ -4,7 +4,9 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.services.ComponentRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -14,6 +16,8 @@ import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
 import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
 import org.lazan.t5.cometd.services.internal.CometdHttpServletRequestFilterImpl;
 import org.lazan.t5.cometd.services.internal.ComponentJSONRendererImpl;
+import org.lazan.t5.cometd.services.internal.PageGlobalsComponentRequestFilter;
+import org.lazan.t5.cometd.services.internal.PageGlobalsImpl;
 import org.lazan.t5.cometd.services.internal.PushManagerImpl;
 import org.lazan.t5.cometd.services.internal.SubscriptionListenersImpl;
 import org.slf4j.Logger;
@@ -27,6 +31,7 @@ public class CometdModule {
 		binder.bind(CometdGlobals.class, CometdGlobalsImpl.class);
 		binder.bind(Authorizers.class, AuthorizersImpl.class);
 		binder.bind(SubscriptionListeners.class, SubscriptionListenersImpl.class);
+		binder.bind(PageGlobals.class, PageGlobalsImpl.class);
 	}
 
 	public static void contributeFactoryDefaults(MappedConfiguration<String, Object> config) {
@@ -53,6 +58,7 @@ public class CometdModule {
 		config.add("org.atmosphere.useStream", "false");
 	}
 
+	@EagerLoad
 	public static BayeuxServer buildBayeuxServer(
 			CometdHttpServletRequestFilter cometdFilter,
 			Authorizers authorizers, SubscriptionListeners subscriptionListeners, CometdGlobals cometdGlobals)
@@ -64,4 +70,8 @@ public class CometdModule {
 		bayeuxServer.addListener(subscriptionListeners);
 		return bayeuxServer;
 	}
+	
+	public static void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> config) {
+		config.addInstance("PageGlobals", PageGlobalsComponentRequestFilter.class, "before:*");
+	}	
 }

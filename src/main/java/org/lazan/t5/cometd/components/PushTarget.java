@@ -1,9 +1,18 @@
 package org.lazan.t5.cometd.components;
 
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_ACTIVE_PAGE_NAME;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_CHANNEL_ID;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_CONTAINING_PAGE_NAME;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_EVENT_TYPE;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_NESTED_COMPONENT_ID;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_PAGE_ACTIVATION_CONTEXT;
+import static org.lazan.t5.cometd.services.CometdConstants.DATA_TOPIC;
+
 import javax.inject.Inject;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Import;
@@ -18,6 +27,7 @@ import org.lazan.t5.cometd.PushSupport;
 import org.lazan.t5.cometd.UpdateStrategy;
 import org.lazan.t5.cometd.internal.PushSupportImpl;
 import org.lazan.t5.cometd.services.ChannelIdSource;
+import org.lazan.t5.cometd.services.PageGlobals;
 
 // TODO: Investigate using a stack for this
 // TODO: work out if all of these js files are actually required
@@ -51,17 +61,8 @@ public class PushTarget extends Any	{
     @Inject
 	private JavaScriptSupport jss;
 	
-	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
-	private String topic;
-	
-	@Parameter
-	private boolean session;
-	
 	@Inject
 	private Request request;
-	
-	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
-	private String event;
 	
 	@Inject
 	private BaseURLSource baseUrlSource;
@@ -69,16 +70,24 @@ public class PushTarget extends Any	{
 	@Inject
 	private ChannelIdSource channelIdSource;
 	
-	// TODO: use an enum for this
-	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:replace")
-	private UpdateStrategy update;
+	@Inject
+	private PageGlobals pageGlobals;
 	
 	@Inject
 	private Environment environment;
+
+	@Parameter(defaultPrefix=BindingConstants.LITERAL, value="literal:replace")
+	private UpdateStrategy update;
+	
+	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
+	private String topic;
+
+	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
+	private String event;
 	
 	@BeginRender
 	void beginRender() {
-		// append config to a single PushSupport instance for all PushTargets
+		// use a single config object for all PushTargets on the page
 		PushSupport pushSupport = environment.peek(PushSupport.class);
 		if (pushSupport == null) {
     		pushSupport = new PushSupportImpl();
@@ -99,24 +108,30 @@ public class PushTarget extends Any	{
     void afterRender() {
     	PushSupport pushSupport = environment.peek(PushSupport.class);
     	if (pushSupport != null) {
-    		// if there are multiple push targets on the page, only a single javascript
-    		// initialization is done
+    		// only one javascript initialization for all PushTargets on the page
     		jss.addInitializerCall("push", pushSupport.getSpec());
     		environment.pop(PushSupport.class);
     	}
     }
     
     protected JSONObject getInitData() {
-    	String channelId = channelIdSource.getChannelId(resources, getClientId());
-    	return new JSONObject(
-			"activePageName", resources.getPageName(),
-			"containingPageName", resources.getPageName(),
-			"nestedComponentId", resources.getNestedId(),
-			"eventType", event,
-			"session", String.valueOf(session),
-			"channelId", channelId,
-			"topic", topic
+    	String channelId = channelIdSource.nextChannelId(topic);
+    	EventContext pageActivationContext = pageGlobals.getPageActivationContext();
+    	JSONObject initData =  new JSONObject(
+    		DATA_CHANNEL_ID, channelId,
+			DATA_ACTIVE_PAGE_NAME, resources.getPageName(),
+			DATA_CONTAINING_PAGE_NAME, resources.getPageName(),
+			DATA_NESTED_COMPONENT_ID, resources.getNestedId(),
+			DATA_EVENT_TYPE, event,
+			DATA_TOPIC, topic
     	);
+    	
+    	// add the page activation context to the data
+    	for (int i = 0; i < pageActivationContext.getCount(); ++i) {
+    		String contextString = pageActivationContext.get(String.class, i);
+    		initData.append(DATA_PAGE_ACTIVATION_CONTEXT, contextString);
+    	}
+    	return initData;
     }
     
     // TODO: https://github.com/uklance/tapestry-cometd/issues/12
