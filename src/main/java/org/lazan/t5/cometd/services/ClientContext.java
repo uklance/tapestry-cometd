@@ -1,7 +1,5 @@
 package org.lazan.t5.cometd.services;
 
-import java.lang.ref.WeakReference;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.tapestry5.EventContext;
@@ -15,9 +13,10 @@ public class ClientContext {
     private final String eventType;
     private final String topic;
     private final EventContext pageActivationContext;
-    private final WeakReference<HttpSession> sessionRef;
+    private final HttpSession httpSession;
     
-	public ClientContext(String channelId, String activePageName, String containingPageName, String nestedComponentId, String eventType, String topic, HttpSession session, EventContext pageActivationContext) {
+	public ClientContext(String channelId, String activePageName, String containingPageName, String nestedComponentId, 
+			String eventType, String topic, HttpSession httpSession, EventContext pageActivationContext) {
 		super();
 		this.channelId = channelId;
 		this.activePageName = activePageName;
@@ -25,7 +24,7 @@ public class ClientContext {
 		this.nestedComponentId = nestedComponentId;
 		this.eventType = eventType;
 		this.topic = topic;
-		this.sessionRef = new WeakReference<HttpSession>(session);
+		this.httpSession = httpSession;
 		this.pageActivationContext = pageActivationContext;
 	}
 	
@@ -54,7 +53,7 @@ public class ClientContext {
 	}
 	
 	public HttpSession getHttpSession() {
-		return sessionRef.get();
+		return httpSession;
 	}
 	
 	public EventContext getPageActivationContext() {

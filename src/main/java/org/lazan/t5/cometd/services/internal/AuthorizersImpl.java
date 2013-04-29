@@ -21,8 +21,11 @@ import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.cometd.bayeux.ChannelId;
+import org.cometd.bayeux.server.BayeuxContext;
+import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
+import org.cometd.server.transport.HttpTransport;
 import org.lazan.t5.cometd.services.Authorizer;
 import org.lazan.t5.cometd.services.AuthorizerContribution;
 import org.lazan.t5.cometd.services.Authorizers;
@@ -36,12 +39,16 @@ public class AuthorizersImpl implements Authorizers {
 	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
 	private final TypeCoercer typeCoercer;
+	private final BayeuxServer bayeuxServer;
 	
-	public AuthorizersImpl(List<AuthorizerContribution> contributions, CometdGlobals cometdGlobals, HttpServletRequest request, TypeCoercer typeCoercer) {
+	public AuthorizersImpl(List<AuthorizerContribution> contributions, CometdGlobals cometdGlobals, HttpServletRequest request, 
+			TypeCoercer typeCoercer, BayeuxServer bayeuxServer)
+	{
 		super();
 		this.authorizers = new TopicMatchers<Authorizer>();
 		this.cometdGlobals = cometdGlobals;
 		this.typeCoercer = typeCoercer;
+		this.bayeuxServer = bayeuxServer;
 		for (AuthorizerContribution contribution : contributions) {
 			addAuthorizer(contribution.getTopic(), contribution.getAuthorizer());
 		}
@@ -60,7 +67,6 @@ public class AuthorizersImpl implements Authorizers {
 			Map<String, Object> data = message.getDataAsMap();
 
 			ClientContext clientContext = parseClientContext(data);
-			cometdGlobals.setClientContext(clientContext.getChannelId(), clientContext);
 			
 			PushSession pushSession = new PushSessionImpl(serverSession, clientContext);
 			String topic = clientContext.getTopic();
@@ -69,6 +75,7 @@ public class AuthorizersImpl implements Authorizers {
 					return Result.deny("Authorization failure");
 				}
 			}
+			cometdGlobals.setClientContext(clientContext.getChannelId(), clientContext);
 		}
 		return Result.grant();
 	}
@@ -92,12 +99,10 @@ public class AuthorizersImpl implements Authorizers {
 			pageContext = new ArrayEventContext(typeCoercer, pageContextArr);
 		}
 		
-		// TODO: 
-		// HttpTransport transport = (HttpTransport) bayeuxServer.getCurrentTransport();
-		// BayeuxContext bayeuxContext = transport.getContext();
-		// HttpSession httpSession = new CometdHttpSession(bayeuxContext)
-		HttpSession httpSession = null;
-		
+		HttpTransport transport = (HttpTransport) bayeuxServer.getCurrentTransport();
+		BayeuxContext bayeuxContext = transport.getContext();
+		HttpSession httpSession = new BayeuxContextHttpSession(bayeuxContext);
+
 		return new ClientContext(channelId, activePageName, containingPageName, nestedComponentId, eventType, topic, httpSession, pageContext);
 	}
 

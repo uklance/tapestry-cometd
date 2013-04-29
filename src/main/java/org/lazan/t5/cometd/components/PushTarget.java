@@ -85,6 +85,9 @@ public class PushTarget extends Any	{
 	@Parameter(required=true, defaultPrefix=BindingConstants.LITERAL)
 	private String event;
 	
+	@Parameter
+	private boolean secure;
+	
 	@BeginRender
 	void beginRender() {
 		// use a single config object for all PushTargets on the page
@@ -137,7 +140,7 @@ public class PushTarget extends Any	{
     // TODO: https://github.com/uklance/tapestry-cometd/issues/12
     protected JSONObject getConfigureOptions() {
     	JSONObject json = new JSONObject();
-    	String url = String.format("%s%s/cometd", baseUrlSource.getBaseURL(false), request.getContextPath()); // TODO
+    	String url = String.format("%s%s/cometd", baseUrlSource.getBaseURL(secure), request.getContextPath());
 		json.put("url", url);
 		//json.put("logLevel", "debug");
     	return json;
