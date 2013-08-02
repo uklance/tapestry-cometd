@@ -7,7 +7,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class JSONUtilsTest extends JSONUtils {
+public class JSONUtilsTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
