@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lazan</groupId>
 	<artifactId>tapestry-cometd</artifactId>
-	<version>0.9.17</version>
+	<version>0.9.18-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>tapestry-cometd Tapestry 5 Application</name>
 	<dependencies>
@@ -12,6 +12,11 @@
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
 			<version>${tapestry.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lazan</groupId>
+			<artifactId>tapestry-offline</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

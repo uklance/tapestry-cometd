@@ -15,7 +15,6 @@ import org.lazan.t5.cometd.services.internal.AuthorizersImpl;
 import org.lazan.t5.cometd.services.internal.ChannelIdSourceImpl;
 import org.lazan.t5.cometd.services.internal.CometdGlobalsImpl;
 import org.lazan.t5.cometd.services.internal.CometdHttpServletRequestFilterImpl;
-import org.lazan.t5.cometd.services.internal.ComponentJSONRendererImpl;
 import org.lazan.t5.cometd.services.internal.PageGlobalsComponentRequestFilter;
 import org.lazan.t5.cometd.services.internal.PageGlobalsImpl;
 import org.lazan.t5.cometd.services.internal.PushManagerImpl;
@@ -26,7 +25,6 @@ public class CometdModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(CometdHttpServletRequestFilter.class, CometdHttpServletRequestFilterImpl.class);
 		binder.bind(PushManager.class, PushManagerImpl.class).eagerLoad();
-		binder.bind(ComponentJSONRenderer.class, ComponentJSONRendererImpl.class);
 		binder.bind(ChannelIdSource.class, ChannelIdSourceImpl.class);
 		binder.bind(CometdGlobals.class, CometdGlobalsImpl.class);
 		binder.bind(Authorizers.class, AuthorizersImpl.class);

@@ -1,8 +1,7 @@
 package org.lazan.t5.cometd.services;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.services.Session;
 
 
 public class ClientContext {
@@ -13,10 +12,10 @@ public class ClientContext {
     private final String eventType;
     private final String topic;
     private final EventContext pageActivationContext;
-    private final HttpSession httpSession;
+    private final Session session;
     
 	public ClientContext(String channelId, String activePageName, String containingPageName, String nestedComponentId, 
-			String eventType, String topic, HttpSession httpSession, EventContext pageActivationContext) {
+			String eventType, String topic, Session session, EventContext pageActivationContext) {
 		super();
 		this.channelId = channelId;
 		this.activePageName = activePageName;
@@ -24,7 +23,7 @@ public class ClientContext {
 		this.nestedComponentId = nestedComponentId;
 		this.eventType = eventType;
 		this.topic = topic;
-		this.httpSession = httpSession;
+		this.session = session;
 		this.pageActivationContext = pageActivationContext;
 	}
 	
@@ -52,8 +51,8 @@ public class ClientContext {
 		return topic;
 	}
 	
-	public HttpSession getHttpSession() {
-		return httpSession;
+	public Session getSession() {
+		return session;
 	}
 	
 	public EventContext getPageActivationContext() {

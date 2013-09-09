@@ -1,5 +1,6 @@
 package org.lazan.t5.cometd.services.internal;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -14,21 +15,22 @@ import org.cometd.bayeux.server.ConfigurableServerChannel;
 import org.cometd.bayeux.server.ServerChannel;
 import org.lazan.t5.cometd.services.ClientContext;
 import org.lazan.t5.cometd.services.CometdGlobals;
-import org.lazan.t5.cometd.services.ComponentJSONRenderer;
 import org.lazan.t5.cometd.services.PushManager;
+import org.lazan.t5.offline.DefaultOfflineRequestContext;
+import org.lazan.t5.offline.services.OfflineComponentRenderer;
 import org.slf4j.Logger;
 
 public class PushManagerImpl implements PushManager {
 	private final BayeuxServer bayeuxServer;
-	private final ComponentJSONRenderer componentStringRenderer;
+	private final OfflineComponentRenderer offlineComponentRenderer;
 	private final TypeCoercer typeCoercer;
 	private final CometdGlobals cometdGlobals;
 	private final Logger logger;
 
-	public PushManagerImpl(BayeuxServer bayeuxServer, ComponentJSONRenderer componentStringRenderer, TypeCoercer typeCoercer, CometdGlobals cometdGlobals, Logger logger) {
+	public PushManagerImpl(BayeuxServer bayeuxServer, OfflineComponentRenderer offlineComponentRenderer, TypeCoercer typeCoercer, CometdGlobals cometdGlobals, Logger logger) {
 		this.bayeuxServer = bayeuxServer;
 		this.bayeuxServer.addListener(new DisconnectListener());
-		this.componentStringRenderer = componentStringRenderer;
+		this.offlineComponentRenderer = offlineComponentRenderer;
 		this.typeCoercer = typeCoercer;
 		this.cometdGlobals = cometdGlobals;
 		this.logger = logger;
@@ -79,9 +81,17 @@ public class PushManagerImpl implements PushManager {
 		if (channel == null) {
 			logger.error("Channel not found for channelId {}", clientContext.getChannelId());
 		} else {
-			JSONObject json = componentStringRenderer.render(eventParams, clientContext.getHttpSession());
-			Map<String, Object> data = JSONUtils.unwrap(json);
-			channel.publish(null, data, null);
+			DefaultOfflineRequestContext requestContext = new DefaultOfflineRequestContext();
+			requestContext.setSession(clientContext.getSession());
+			requestContext.setXHR(true);
+			try {
+				JSONObject json = offlineComponentRenderer.renderComponent(requestContext, eventParams);
+				Map<String, Object> data = JSONUtils.unwrap(json);
+				channel.publish(null, data, null);
+			} catch (IOException e) {
+				String msg = String.format("Error rendering component (%s)", eventParams);
+				logger.error(msg, e);
+			}
 		}
 	}
 }

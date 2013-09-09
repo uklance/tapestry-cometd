@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.Session;
 import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.BayeuxContext;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -101,9 +101,9 @@ public class AuthorizersImpl implements Authorizers {
 		
 		HttpTransport transport = (HttpTransport) bayeuxServer.getCurrentTransport();
 		BayeuxContext bayeuxContext = transport.getContext();
-		HttpSession httpSession = new BayeuxContextHttpSession(bayeuxContext);
+		Session session = new BayeuxContextSession(bayeuxContext);
 
-		return new ClientContext(channelId, activePageName, containingPageName, nestedComponentId, eventType, topic, httpSession, pageContext);
+		return new ClientContext(channelId, activePageName, containingPageName, nestedComponentId, eventType, topic, session, pageContext);
 	}
 
 	private String getRequiredString(Map<String, Object> data, String key) {
