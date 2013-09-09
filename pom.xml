@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lazan</groupId>
 	<artifactId>tapestry-cometd</artifactId>
-	<version>0.9.18-SNAPSHOT</version>
+	<version>0.9.18</version>
 	<packaging>jar</packaging>
 	<name>tapestry-cometd Tapestry 5 Application</name>
 	<dependencies>
