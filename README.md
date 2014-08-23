@@ -96,7 +96,7 @@ public class PushDemo {
 <repositories>
 	<repository>
 		<id>tapestry-cometd</id>
-		<url>https://github.com/uklance/releases/raw/master</url>
+		<url>https://raw.github.com/uklance/releases/master</url>
 	</repository>
 	<repository>
 		<id>devlab722-repo</id>
