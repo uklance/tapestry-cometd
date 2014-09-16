@@ -16,10 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
-import org.apache.tapestry5.internal.services.ArrayEventContext;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.Session;
+import org.apache.tapestry5.services.ValueEncoderSource;
 import org.cometd.bayeux.ChannelId;
 import org.cometd.bayeux.server.BayeuxContext;
 import org.cometd.bayeux.server.BayeuxServer;
@@ -38,16 +37,16 @@ public class AuthorizersImpl implements Authorizers {
 	private static final EventContext EMPTY_EVENT_CONTEXT = new EmptyEventContext();
 	private final TopicMatchers<Authorizer> authorizers;
 	private final CometdGlobals cometdGlobals;
-	private final TypeCoercer typeCoercer;
+	private final ValueEncoderSource valueEncoderSource;
 	private final BayeuxServer bayeuxServer;
 	
 	public AuthorizersImpl(List<AuthorizerContribution> contributions, CometdGlobals cometdGlobals, HttpServletRequest request, 
-			TypeCoercer typeCoercer, BayeuxServer bayeuxServer)
+			ValueEncoderSource valueEncoderSource, BayeuxServer bayeuxServer)
 	{
 		super();
 		this.authorizers = new TopicMatchers<Authorizer>();
 		this.cometdGlobals = cometdGlobals;
-		this.typeCoercer = typeCoercer;
+		this.valueEncoderSource = valueEncoderSource;
 		this.bayeuxServer = bayeuxServer;
 		for (AuthorizerContribution contribution : contributions) {
 			addAuthorizer(contribution.getTopic(), contribution.getAuthorizer());
@@ -80,7 +79,6 @@ public class AuthorizersImpl implements Authorizers {
 		return Result.grant();
 	}
 	
-	@SuppressWarnings("rawtypes")
 	protected ClientContext parseClientContext(Map<String, Object> data) {
 		String channelId = getRequiredString(data, DATA_CHANNEL_ID);
 		String activePageName = getRequiredString(data, DATA_ACTIVE_PAGE_NAME);
@@ -93,10 +91,10 @@ public class AuthorizersImpl implements Authorizers {
 		String topic = getRequiredString(data, DATA_TOPIC);
 		
 		Object pageContextObj = data.get(DATA_PAGE_ACTIVATION_CONTEXT);
-		Object[] pageContextArr = (pageContextObj instanceof Collection) ? ((Collection) pageContextObj).toArray() : (Object[]) pageContextObj;
+		String[] activationContext = toStringArray(pageContextObj);
 		EventContext pageContext = EMPTY_EVENT_CONTEXT;
-		if (pageContextArr != null && pageContextArr.length > 0) {
-			pageContext = new ArrayEventContext(typeCoercer, pageContextArr);
+		if (activationContext != null && activationContext.length > 0) {
+			pageContext = new StringEventContext(valueEncoderSource, activationContext);
 		}
 		
 		HttpTransport transport = (HttpTransport) bayeuxServer.getCurrentTransport();
@@ -104,6 +102,23 @@ public class AuthorizersImpl implements Authorizers {
 		Session session = new BayeuxContextSession(bayeuxContext);
 
 		return new ClientContext(channelId, activePageName, containingPageName, nestedComponentId, eventType, topic, session, pageContext);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private String[] toStringArray(Object data) {
+		if (data == null) {
+			return null;
+		}
+		String[] stringArray;
+		if (data instanceof Collection) {
+			Collection pageContextColl = (Collection) data;
+			stringArray = (String[]) pageContextColl.toArray(new String[pageContextColl.size()]);
+		} else {
+			Object[] pageContextArr = (Object[]) data;
+			stringArray = new String[pageContextArr.length];
+			System.arraycopy(data, 0, stringArray, 0, pageContextArr.length);
+		}
+		return stringArray;
 	}
 
 	private String getRequiredString(Map<String, Object> data, String key) {

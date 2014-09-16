@@ -1,8 +1,8 @@
 package org.lazan.t5.cometd.services.internal;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.services.ArrayEventContext;
@@ -85,10 +85,11 @@ public class PushManagerImpl implements PushManager {
 			requestContext.setSession(clientContext.getSession());
 			requestContext.setXHR(true);
 			try {
-				JSONObject json = offlineComponentRenderer.renderComponent(requestContext, eventParams);
+				Future<JSONObject> future = offlineComponentRenderer.renderComponentEvent(requestContext, eventParams); 
+				JSONObject json = future.get();
 				Map<String, Object> data = JSONUtils.unwrap(json);
 				channel.publish(null, data, null);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				String msg = String.format("Error rendering component (%s)", eventParams);
 				logger.error(msg, e);
 			}
