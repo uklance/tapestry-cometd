@@ -71,6 +71,10 @@ public class PushDemo {
 }
 ```
 
+## Demo
+
+See a live demo running [here](http://t5cometd-lazan.rhcloud.com)
+
 ## Maven
 ```xml
 <dependencies>
@@ -107,17 +111,6 @@ public class PushDemo {
 	</repository>
 </repositories>
 ```
-
-## Demo
-
-Download the tapestry-cometd-demo from [here](https://github.com/uklance/tapestry-cometd-demo) and run the 
-following from the command line.
-```
-mvn jetty:run
-```
-After jetty starts, point your browser to 
-* [http://localhost:8080/tapestry-cometd-demo/Stocks](http://localhost:8080/tapestry-cometd-demo/Stocks)
-* [http://localhost:8080/tapestry-cometd-demo/Chat](http://localhost:8080/tapestry-cometd-demo/Chat)
 
 ## Links
 * [Custom Authorizers](https://github.com/uklance/tapestry-cometd/wiki/Custom-Authorizers)
