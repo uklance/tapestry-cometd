@@ -1,0 +1,19 @@
+<html t:type="layout" title="Stocks"
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+	<table border="1" style="width: 200px">
+		<t:loop source="tickers" value="ticker">
+			<tr>
+				<td>${ticker}</td>
+				<td><t:cometd.PushTarget topic="prop:topic" event="stockPriceReceived1" update="replace">Waiting ...</t:cometd.PushTarget></td>
+			</tr>
+		</t:loop>
+	</table>
+	<t:block t:id="stockPriceBlock1">
+		<font color="${stockColor}">${stockPrice.price}</font>
+	</t:block>
+	
+	<hr />
+	<t:cometd.PushTarget topic="/stocks/**" event="stockPriceReceived2" />
+	<div id="chart" style="width:800px; height:300px;"></div>
+</html>

@@ -1,0 +1,6 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+	<img src="${context:images/logo-m.jpg}" />
+	<h3>Tapestry CometD</h3>
+	A <a href="http://en.wikipedia.org/wiki/Push_technology">push</a> library for
+	<a href="http://tapestry.apache.org/">Tapestry5</a> based on <a href="http://cometd.org/">CometD</a>
+</t:layout>
